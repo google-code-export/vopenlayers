@@ -11,7 +11,7 @@
 
 Using IDE for doing the same thing should work just fine too
 
-= Developing new features/fixing bugs =
+= Help for developers starting new features/fixing bugs =
 
 == GWT compiling/debugging ==
 
@@ -31,3 +31,22 @@ Also note that it becomes much faster to compile the code (for debugging) if you
 == development server ==
 
 The projects test package also contains VolTestServer class which contains a very fast jetty launching for development purposes.
+
+== Hardest parts (GWT,JSNI, wrappers) ==
+
+GWT runs its code in an iframe to avoid collisions with other javascripts. OpenLayers does not. OpenLayers developers also hasn't taken this into consideration and most difficult issues when doing wrappers are when parameters are passed from GWT world to OpenLayers world.
+
+E.g. passing arrays may be a really pain in the ass. OpenLayers detects js arrays with "typeof", which does not work between iframes. See http://trac.osgeo.org/openlayers/ticket/2959 . In the project this we use workaround that re creates the array in the scope of that main window. helpers.js file contains function toOlArray that may be used in GWT JSNI funcitons like this:
+
+var linearRing = new $wnd.OpenLayers.Geometry.LinearRing($wnd.toOlArray(points));
+
+The code above also demonstrates the fact that we must call OpenLayers api with "$wnd" prefix. Another option is to create a shorcut at the beginning of JSNI method:
+
+var OpenLayers = $wnd.OpenLayers;
+// do stuff with things
+
+Scope issues may also rise on other global variables which OpenLayers code rely on same parts. E.g. if you see missing "console" errors on older browsers, OL is then missing the "firebug lite" it creates into the main windows scope. Console issue should have a global hack since r20, but in case it doesn't work creating a shorthand should work like this: var console = $wnd.console;.
+
+== Vaadin client side integration ==
+
+Vaadin currently relies on the assumption that the client side component are always widgets. As this is not easily accomplished with OpenLayers integration, there is a hidden fake tree of Widget in addition to actual OpenLayers map components. The widget hierarchy is there basically just to keep GWT and Vaadin happy. Widgets then point to corresponding JSNI objects that wrap actual OpenLayers objects. Using this approach is essential to use Vaadin's built in paint mechanism that provide a decent client-server communication and e.g. "subtree caching".
