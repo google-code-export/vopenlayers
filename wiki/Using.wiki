@@ -1,0 +1,16 @@
+#summary Instructions how to use vopenlayers
+
+= Using vopenlayers =
+
+vopenlayers is basically a Vaadin addon, containing both client and server side classes. The widgetset (GWT module) also contains some classes that may be used as is in pure GWT applications.
+
+check general instructions for Vaadin addons from the Directory:
+http://vaadin.com/directory
+
+In several places the documentation is non-existent. API should though be descriptive especially if openlayers itself is somewhat familiar for the developer. OpenLayers docs may thus be for a great help.
+
+= Example project = 
+
+The demo application is packaged with maven and can be used as a reference when setting up the environment.
+
+The source code may be checked out or browsed from the Source part.
