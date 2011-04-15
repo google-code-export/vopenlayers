@@ -2,9 +2,11 @@
 
 = Using vopenlayers =
 
-1. add maven dependency
-2. update (or create and update) your widgetset to inherit volwidgetset: mvn vaadin:update-widgetset
-3. Check your widgetset. Ensure it has only <inherits name="org.vaadin.vol.VolWidgetsetWithHostedScript" /> or <inherits name="org.vaadin.vol.VolWidgetset" /> depending how you wish to serve openlayers scripts
+ 1. add maven dependency
+ 
+ 2. update (or create and update) your widgetset to inherit volwidgetset: mvn vaadin:update-widgetset
+ 
+ 3. Check your widgetset. Ensure it has only {{{<inherits name="org.vaadin.vol.VolWidgetsetWithHostedScript" />}}} or {{{<inherits name="org.vaadin.vol.VolWidgetset" />}}} depending how you wish to serve openlayers scripts
 
 Optional steps:
  * include openlayers scipts if you don't use the "hosted script" version of the widgetset
