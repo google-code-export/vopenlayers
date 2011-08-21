@@ -13,13 +13,24 @@ Using IDE for doing the same thing should work just fine too
 
 = Help for developers starting new features/fixing bugs =
 
+== Coding conventions ==
+
+We use the same coding conventions as core Vaadin. 
+
+http://dev.vaadin.com/wiki/CodingConventions
+
 == GWT compiling/debugging ==
 
-Note that the gwt maven plugin is commented out from the pom.xml file. To build and test using the addon project one must either comment out that part or use GWT directly (e.g. via eclipse launch configuration). The latter is the approach used by the original author. The development cycle gets little faster that way.  Settings for using GWT directly:
+gwt maven plugin can be used to compile the test app widgetset to target/testwebapp:
+
+mvn gwt:compile
+
+
+The test app widget set can also be compiled via command line or e.g. eclipse launch configuration.  Settings for using GWT directly:
 
 main class: com.google.gwt.dev.Compiler
 
-program arguments: -gen generated -draftCompile -war target/vol/VAADIN/widgetsets org.vaadin.vol.demo.VolExampleAppWidgetset -style PRETTY
+program arguments: -gen generated -draftCompile -war target/testwebapp/VAADIN/widgetsets org.vaadin.vol.demo.VolExampleAppWidgetset -style PRETTY
 
 vm args:  -Xmx1024M -Xms512M
 
@@ -30,7 +41,7 @@ Also note that it becomes much faster to compile the code (for debugging) if you
 
 == development server ==
 
-The projects test package also contains VolTestServer class which contains a very fast jetty launching for development purposes.
+The projects test package also contains VolTestServer class which contains a very fast jetty launching for development purposes. It automatically serves the widget set from target/testwebapp.
 
 == Hardest parts (GWT,JSNI, wrappers) ==
 
