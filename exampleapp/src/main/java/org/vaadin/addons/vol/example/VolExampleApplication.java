@@ -44,141 +44,140 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 /**
- * Demonstration application that shows how to use a simple custom client-side
- * GWT component, the ColorPicker.
+ * Demonstration how to build a simple Vaadin application using OpenStreeMap.
  */
 @SuppressWarnings("serial")
 public class VolExampleApplication extends com.vaadin.Application {
-	private final VerticalLayout layout = new VerticalLayout();
-	private final HorizontalLayout controls = new HorizontalLayout();
-	private final Window mainWindow = new Window("Vol example Application",
-			layout);
+    private final VerticalLayout layout = new VerticalLayout();
+    private final HorizontalLayout controls = new HorizontalLayout();
+    private final Window mainWindow = new Window("Vol example Application",
+            layout);
 
-	@Override
-	public void init() {
-		setMainWindow(mainWindow);
-		final OpenLayersMap map = new OpenLayersMap();
-		map.setImmediate(true); // update extent and zoom to server as they
-								// change
+    @Override
+    public void init() {
+        setMainWindow(mainWindow);
+        final OpenLayersMap map = new OpenLayersMap();
+        map.setImmediate(true); // update extent and zoom to server as they
+                                // change
 
-		/*
-		 * Open street maps layer as a base layer. Note importance of the order,
-		 * OSM layer now sets the projection to Spherical Mercator. If added eg.
-		 * after markers or vectors, they might render with bad values.
-		 */
-		OpenStreetMapLayer osm = new OpenStreetMapLayer();
+        /*
+         * Open street maps layer as a base layer. Note importance of the order,
+         * OSM layer now sets the projection to Spherical Mercator. If added eg.
+         * after markers or vectors, they might render with bad values.
+         */
+        OpenStreetMapLayer osm = new OpenStreetMapLayer();
 
-		GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
+        GoogleStreetMapLayer googleStreets = new GoogleStreetMapLayer();
 
-		/*
-		 * This is used in example to demonstrate drawing capabilities.
-		 */
-		final VectorLayer vectorLayer = new VectorLayer();
+        /*
+         * This is used in example to demonstrate drawing capabilities.
+         */
+        final VectorLayer vectorLayer = new VectorLayer();
 
-		/*
-		 * Draw triangle over vaadin hq.
-		 */
+        /*
+         * Draw triangle over vaadin hq.
+         */
 
-		Point[] points = new Point[3];
-		points[0] = new Point(22.29, 60.45);
-		points[1] = new Point(22.30, 60.46);
-		points[2] = new Point(22.31, 60.45);
+        Point[] points = new Point[3];
+        points[0] = new Point(22.29, 60.45);
+        points[1] = new Point(22.30, 60.46);
+        points[2] = new Point(22.31, 60.45);
 
-		Area area = new Area();
-		area.setPoints(points);
+        Area area = new Area();
+        area.setPoints(points);
 
-		vectorLayer.addVector(area);
+        vectorLayer.addVector(area);
 
-		// Define a Marker Layer
-		MarkerLayer markerLayer = new MarkerLayer();
+        // Define a Marker Layer
+        MarkerLayer markerLayer = new MarkerLayer();
 
-		// Defining a new Marker
+        // Defining a new Marker
 
-		final Marker marker = new Marker(22.30083, 60.452541);
-		// URL of marker Icon
-		marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60,
-				20);
+        final Marker marker = new Marker(22.30083, 60.452541);
+        // URL of marker Icon
+        marker.setIcon("http://dev.vaadin.com/chrome/site/vaadin-trac.png", 60,
+                20);
 
-		// Add some server side integration when clicking a marker
-		marker.addClickListener(new ClickListener() {
-			public void click(ClickEvent event) {
-				final Popup popup = new Popup(marker.getLon(), marker.getLat(),
-						"Vaadin HQ is <em>here</em>!");
-				popup.setAnchor(marker);
-				popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
-				popup.addListener(new CloseListener() {
-					public void onClose(CloseEvent event) {
-						map.removeComponent(popup);
-					}
-				});
-				map.addPopup(popup);
-			}
-		});
+        // Add some server side integration when clicking a marker
+        marker.addClickListener(new ClickListener() {
+            public void click(ClickEvent event) {
+                final Popup popup = new Popup(marker.getLon(), marker.getLat(),
+                        "Vaadin HQ is <em>here</em>!");
+                popup.setAnchor(marker);
+                popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
+                popup.addListener(new CloseListener() {
+                    public void onClose(CloseEvent event) {
+                        map.removeComponent(popup);
+                    }
+                });
+                map.addPopup(popup);
+            }
+        });
 
-		// Add the marker to the marker Layer
-		markerLayer.addMarker(marker);
-		map.setCenter(22.30, 60.452);
-		map.setZoom(15);
+        // Add the marker to the marker Layer
+        markerLayer.addMarker(marker);
+        map.setCenter(22.30, 60.452);
+        map.setZoom(15);
 
-		map.setSizeFull();
+        map.setSizeFull();
 
-		OptionGroup drawingMode = new OptionGroup();
-		for (DrawingMode l : VectorLayer.DrawingMode.values()) {
-			drawingMode.addItem(l);
-		}
-		drawingMode.addListener(new Property.ValueChangeListener() {
-			public void valueChange(ValueChangeEvent event) {
-				DrawingMode mode = (DrawingMode) event.getProperty().getValue();
-				if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
-						|| mode == DrawingMode.LINE
-						|| mode == DrawingMode.POINT
-						|| mode == DrawingMode.NONE) {
-					vectorLayer.setDrawindMode(mode);
-				} else {
-					mainWindow
-							.showNotification("Sorry, feature is on TODO list. Try area.");
-				}
-			}
-		});
-		drawingMode.setValue(DrawingMode.NONE);
-		drawingMode.setImmediate(true);
+        OptionGroup drawingMode = new OptionGroup();
+        for (DrawingMode l : VectorLayer.DrawingMode.values()) {
+            drawingMode.addItem(l);
+        }
+        drawingMode.addListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                DrawingMode mode = (DrawingMode) event.getProperty().getValue();
+                if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
+                        || mode == DrawingMode.LINE
+                        || mode == DrawingMode.POINT
+                        || mode == DrawingMode.NONE) {
+                    vectorLayer.setDrawindMode(mode);
+                } else {
+                    mainWindow
+                            .showNotification("Sorry, feature is on TODO list. Try area.");
+                }
+            }
+        });
+        drawingMode.setValue(DrawingMode.NONE);
+        drawingMode.setImmediate(true);
 
-		vectorLayer.addListener(new VectorDrawnListener() {
-			public void vectorDrawn(VectorDrawnEvent event) {
-				/*
-				 * Drawn vectors are passed to VectroDrawnListeners.
-				 * 
-				 * Here we justs simply add them to vector layer to persist them
-				 * (other wise new vectors are dropped).
-				 */
+        vectorLayer.addListener(new VectorDrawnListener() {
+            public void vectorDrawn(VectorDrawnEvent event) {
+                /*
+                 * Drawn vectors are passed to VectroDrawnListeners.
+                 * 
+                 * Here we justs simply add them to vector layer to persist them
+                 * (other wise new vectors are dropped).
+                 */
 
-				Vector vector = event.getVector();
-				vectorLayer.addVector(vector);
-				vectorLayer.getWindow().showNotification(
-						"Vector drawn:" + vector);
-			}
-		});
+                Vector vector = event.getVector();
+                vectorLayer.addVector(vector);
+                vectorLayer.getWindow().showNotification(
+                        "Vector drawn:" + vector);
+            }
+        });
 
-		vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
-			public void vectorModified(VectorModifiedEvent event) {
-				vectorLayer.getWindow().showNotification(
-						"Vector modified:" + event.getVector());
-			}
-		});
+        vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
+            public void vectorModified(VectorModifiedEvent event) {
+                vectorLayer.getWindow().showNotification(
+                        "Vector modified:" + event.getVector());
+            }
+        });
 
-		// add layers
-		map.addLayer(osm);
-		map.addLayer(googleStreets);
-		
-		map.addLayer(vectorLayer);
-		map.addLayer(markerLayer);
+        // add layers
+        map.addLayer(osm);
+        map.addLayer(googleStreets);
 
-		controls.addComponent(drawingMode);
+        map.addLayer(vectorLayer);
+        map.addLayer(markerLayer);
 
-		layout.setSizeFull();
-		layout.addComponent(controls);
-		layout.addComponent(map);
-		layout.setExpandRatio(map, 1);
+        controls.addComponent(drawingMode);
 
-	}
+        layout.setSizeFull();
+        layout.addComponent(controls);
+        layout.addComponent(map);
+        layout.setExpandRatio(map, 1);
+
+    }
 }
