@@ -9,7 +9,15 @@
  * run maven install target ( mvn install)
  * use the addon jar file from target directory or straight from your local maven repository
 
+Quick command line how-to for developers:
+ * check out the project: svn co http://vopenlayers.googlecode.com/svn/trunk/ voltest
+ * get to the project directory: cd voltest/
+ * compile test widgetset and java sources: mvn gwt:compile package
+ * Run test server: mvn exec:java -Dexec.mainClass="org.vaadin.vol.VolTestServer" -Dexec.classpathScope="test"
+
 Using IDE for doing the same thing should work just fine too
+
+Note that Eclipse m2e plugin for some reason adds "excluded: **" for test source directory. Remove that to make eclipse autocompile tests. Starting TestServer is then supa easy with "debug as-> java app"
 
 = Help for developers starting new features/fixing bugs =
 
