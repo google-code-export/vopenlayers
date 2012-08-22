@@ -7,13 +7,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.ClientWidget;
 import com.vaadin.ui.Component;
 
-@ClientWidget(org.vaadin.vol.client.ui.VMarkerLayer.class)
+//@ClientWidget(org.vaadin.vol.client.ui.VMarkerLayer.class)
 public class MarkerLayer extends AbstractComponentContainer implements Layer {
 
     private List<Marker> markers = new LinkedList<Marker>();
@@ -24,13 +21,13 @@ public class MarkerLayer extends AbstractComponentContainer implements Layer {
         addComponent(m);
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        target.addAttribute("name", getDisplayName());
-        for (Marker m : markers) {
-            m.paint(target);
-        }
-    }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        target.addAttribute("name", getDisplayName());
+//        for (Marker m : markers) {
+//            m.paint(target);
+//        }
+//    }
 
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
@@ -69,5 +66,11 @@ public class MarkerLayer extends AbstractComponentContainer implements Layer {
 
     public void removeMarker(Marker marker) {
         removeComponent(marker);
+    }
+
+    @Override
+    public int getComponentCount() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

@@ -3,13 +3,10 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWellKnownTextLayer;
-
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.ClientWidget;
 
-@ClientWidget(VWellKnownTextLayer.class)
+//@ClientWidget(VWellKnownTextLayer.class)
 public class WellKnownTextLayer extends AbstractAutoPopulatedVectorLayer implements Layer {
     private String wkt = "";
 
@@ -24,7 +21,7 @@ public class WellKnownTextLayer extends AbstractAutoPopulatedVectorLayer impleme
     }
     
     public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
+//        super.paintContent(target);
         target.addAttribute("wkt", wkt);
     }
     

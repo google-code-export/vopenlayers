@@ -7,24 +7,30 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public abstract class AbstractVOLTest extends Window {
+public abstract class AbstractVOLTest extends CssLayout {
 
     protected VerticalLayout content;
 
     public AbstractVOLTest() {
+        setSizeFull();
         content = new VerticalLayout();
-        setContent(content);
+        addComponent(content);
+    }
+    
+    public VerticalLayout getContent() {
+        return content;
     }
 
     @Override
     public void attach() {
         super.attach();
         setup();
-        showNotification(getClass().getSimpleName(), getDescription(),
-                Notification.TYPE_WARNING_MESSAGE);
+        Notification.show(getClass().getSimpleName() + " : " + getDescription());
     }
 
     protected void setup() {

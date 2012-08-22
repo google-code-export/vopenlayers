@@ -9,7 +9,6 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.vaadin.vol.client.ui.VMapTilerLayer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -17,12 +16,11 @@ import org.xml.sax.SAXException;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
 
 /**
  * see great tool: www.maptiler.org
  */
-@ClientWidget(VMapTilerLayer.class)
+//@ClientWidget(VMapTilerLayer.class)
 public class MapTilerLayer extends AbstractComponent implements Layer {
 	private static final double MARGIN = 0.0001;
 	private String uri = "";

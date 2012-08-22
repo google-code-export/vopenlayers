@@ -1,11 +1,8 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VBingMapLayer;
-
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
 
 /**
  * BingMap layer that can be added to {@link OpenLayersMap}. Require API key
@@ -15,7 +12,7 @@ import com.vaadin.ui.ClientWidget;
  * Note that no settings can be changed after the layer has been drawn for the
  * first time.
  */
-@ClientWidget(VBingMapLayer.class)
+//@ClientWidget(VBingMapLayer.class)
 public class BingMapLayer extends AbstractComponent implements Layer {
     public enum Type {
         Road, Aerial, AerialWithLabels
@@ -34,19 +31,19 @@ public class BingMapLayer extends AbstractComponent implements Layer {
         setApikey(apikey);
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        if (apikey == null) {
-            throw new IllegalStateException("Bing maps API key must be set!");
-        }
-        super.paintContent(target);
-
-        if (displayName != null) {
-            target.addAttribute("name", displayName);
-        }
-        target.addAttribute("apikey", apikey);
-        target.addAttribute("type", getType().toString());
-    }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        if (apikey == null) {
+//            throw new IllegalStateException("Bing maps API key must be set!");
+//        }
+//        super.paintContent(target);
+//
+//        if (displayName != null) {
+//            target.addAttribute("name", displayName);
+//        }
+//        target.addAttribute("apikey", apikey);
+//        target.addAttribute("type", getType().toString());
+//    }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;

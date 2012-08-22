@@ -3,14 +3,11 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWebMapServiceLayer;
-
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
 
-@ClientWidget(VWebMapServiceLayer.class)
+//@ClientWidget(VWebMapServiceLayer.class)
 public class WebMapServiceLayer extends AbstractComponent implements Layer {
 	private String uri = "";
 	private String type = "wms";

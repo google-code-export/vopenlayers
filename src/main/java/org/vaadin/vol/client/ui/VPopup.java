@@ -33,11 +33,12 @@ public class VPopup extends Widget implements Paintable {
         @SuppressWarnings("rawtypes")
         public void onEvent(JsArray arguments) {
             popup.hide();
-            client.updateVariable(client.getPid(VPopup.this), "close", "", true);
+            client.updateVariable(pid, "close", "", true);
         }
     };
     private ApplicationConnection client;
     private Paintable paintable;
+    private String pid;
 
     public VPopup() {
         setElement(Document.get().createDivElement());
@@ -56,6 +57,7 @@ public class VPopup extends Widget implements Paintable {
             return;
         }
         this.client = client;
+        this.pid = childUIDL.getId();
 
         /*
          * With Popups, we always remove the old one and add a new one.
@@ -72,7 +74,7 @@ public class VPopup extends Widget implements Paintable {
         Projection projection2 = getMap().getProjection();
         point.transform(projection, projection2);
 
-        paintable = client.getPaintable(childUIDL.getChildUIDL(0));
+        paintable = (Paintable) client.getPaintable(childUIDL.getChildUIDL(0)).getWidget();
 
         String content = "Loading...";
 
@@ -82,12 +84,13 @@ public class VPopup extends Widget implements Paintable {
         // TODO remove marker dependency
         Marker anchor = null;
         if (childUIDL.hasAttribute("anchor")) {
-            Paintable paintableAttribute = childUIDL.getPaintableAttribute(
-                    "anchor", client);
-            if (paintableAttribute != null) {
-                VMarker vanchor = (VMarker) paintableAttribute;
-                anchor = vanchor.getMarker();
-            }
+//            // FIXME
+//            Paintable paintableAttribute = childUIDL.getPaintableAttribute(
+//                    "anchor", client);
+//            if (paintableAttribute != null) {
+//                VMarker vanchor = (VMarker) paintableAttribute;
+//                anchor = vanchor.getMarker();
+//            }
         }
 
         boolean closable = childUIDL.getBooleanAttribute("closable");
@@ -149,7 +152,8 @@ public class VPopup extends Widget implements Paintable {
         super.onDetach();
         ((Widget) paintable).removeFromParent();
         popup.hide();
-        client.unregisterPaintable(paintable);
+//        // FIXME
+//        client.unregisterPaintable(paintable);
     }
 
 }

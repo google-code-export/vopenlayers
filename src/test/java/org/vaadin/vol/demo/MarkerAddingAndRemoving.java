@@ -11,6 +11,7 @@ import com.vaadin.event.Action.Handler;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 
 public class MarkerAddingAndRemoving extends AbstractVOLTest implements Handler {
 
@@ -56,7 +57,7 @@ public class MarkerAddingAndRemoving extends AbstractVOLTest implements Handler 
     @Override
     public void attach() {
         super.attach();
-        showNotification(getDescription(), Notification.TYPE_WARNING_MESSAGE);
+        Notification.show(getDescription());
     }
 
     private void addMarker(double lon, double lat) {

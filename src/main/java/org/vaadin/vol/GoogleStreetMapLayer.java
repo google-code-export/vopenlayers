@@ -3,12 +3,7 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VGoogleStreetMapLayer;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
 
 /**
  * Google street layer that can be added to {@link OpenLayersMap}.
@@ -21,22 +16,22 @@ import com.vaadin.ui.ClientWidget;
  *  &lt;script src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"&gt;&lt;/script&gt;
  * </code>
  */
-@ClientWidget(VGoogleStreetMapLayer.class)
+//@ClientWidget(VGoogleStreetMapLayer.class)
 public class GoogleStreetMapLayer extends AbstractComponent implements Layer {
 
 	private String displayName;
 	private String projection;
 	
-	@Override
-	public void paintContent(PaintTarget target) throws PaintException {
-		super.paintContent(target);
-		if(projection != null) {
-			target.addAttribute("projection", projection);
-		}
-		if(displayName != null) {
-			target.addAttribute("displayName", displayName);
-		}
-	}
+//	@Override
+//	public void paintContent(PaintTarget target) throws PaintException {
+//		super.paintContent(target);
+//		if(projection != null) {
+//			target.addAttribute("projection", projection);
+//		}
+//		if(displayName != null) {
+//			target.addAttribute("displayName", displayName);
+//		}
+//	}
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;

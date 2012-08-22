@@ -24,7 +24,7 @@ import com.vaadin.ui.Component;
  * Server side component for the VOpenLayersMap widget.
  */
 @SuppressWarnings("serial")
-@com.vaadin.ui.ClientWidget(org.vaadin.vol.client.ui.VOpenLayersMap.class)
+//@com.vaadin.ui.ClientWidget(org.vaadin.vol.client.ui.VOpenLayersMap.class)
 public class OpenLayersMap extends AbstractComponentContainer implements
         Action.Container {
 
@@ -163,98 +163,98 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         }
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        if (isDirty("projection") && projection != null) {
-            target.addAttribute("projection", projection);
-        }
-        if (isDirty("jsMapOptions") && jsMapOptions != null) {
-            target.addAttribute("jsMapOptions", jsMapOptions);
-        }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        super.paintContent(target);
+//        if (isDirty("projection") && projection != null) {
+//            target.addAttribute("projection", projection);
+//        }
+//        if (isDirty("jsMapOptions") && jsMapOptions != null) {
+//            target.addAttribute("jsMapOptions", jsMapOptions);
+//        }
+//
+//        if (isDirty("restrictedExtend") && restrictedExtend != null) {
+//            restrictedExtend.paint("re", target);
+//        }
+//
+//        if (isDirty("zoomToExtent") && zoomToExtent != null) {
+//            zoomToExtent.paint("ze", target);
+//            zoomToExtent = null;
+//        } else {
+//            if (isDirty("clat")) {
+//                target.addAttribute("clon", centerLon);
+//                target.addAttribute("clat", centerLat);
+//            }
+//            if (isDirty("zoom")) {
+//                target.addAttribute("zoom", zoom);
+//            }
+//        }
+//        if (isDirty("components")) {
+//            target.addAttribute("componentsPainted", true);
+//            for (Component component : layers) {
+//                component.paint(target);
+//            }
+//        }
+//        if (isDirty("controls")) {
+//            target.addAttribute("controls", controls.toArray());
+//        }
+//
+//        paintActions(target, findAndPaintBodyActions(target));
+//
+//        clearPartialPaintFlags();
+//        fullRepaint = false;
+//    }
 
-        if (isDirty("restrictedExtend") && restrictedExtend != null) {
-            restrictedExtend.paint("re", target);
-        }
-
-        if (isDirty("zoomToExtent") && zoomToExtent != null) {
-            zoomToExtent.paint("ze", target);
-            zoomToExtent = null;
-        } else {
-            if (isDirty("clat")) {
-                target.addAttribute("clon", centerLon);
-                target.addAttribute("clat", centerLat);
-            }
-            if (isDirty("zoom")) {
-                target.addAttribute("zoom", zoom);
-            }
-        }
-        if (isDirty("components")) {
-            target.addAttribute("componentsPainted", true);
-            for (Component component : layers) {
-                component.paint(target);
-            }
-        }
-        if (isDirty("controls")) {
-            target.addAttribute("controls", controls.toArray());
-        }
-
-        paintActions(target, findAndPaintBodyActions(target));
-
-        clearPartialPaintFlags();
-        fullRepaint = false;
-    }
-
-    /**
-     * Receive and handle events and other variable changes from the client.
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-        super.changeVariables(source, variables);
-        if (variables.containsKey("top")) {
-            updateExtent(variables);
-            fireEvent(new ExtentChangeEvent());
-        }
-
-        // Actions
-        if (variables.containsKey("action")) {
-            String string = (String) variables.get("action");
-            final StringTokenizer st = new StringTokenizer(string, ",");
-            if (st.countTokens() == 2) {
-                final String coords = st.nextToken();
-                String[] split = coords.split(":");
-                Point point = new Point(Double.parseDouble(split[0]),
-                        Double.parseDouble(split[1]));
-                final Action action = (Action) actionMapper.get(st.nextToken());
-
-                if (action != null && actionHandlers != null) {
-                    for (Action.Handler ah : actionHandlers) {
-                        ah.handleAction(action, this, point);
-                    }
-                }
-            }
-        }
-
-        if (variables.containsKey("clicked")) {
-            double lon = (Double) variables.get("lon");
-            double lat = (Double) variables.get("lat");
-            int x = (Integer) variables.get("x");
-            int y = (Integer) variables.get("y");
-            int width = (Integer) variables.get("width");
-            int height = (Integer) variables.get("height");
-            PointInformation pointInformation = new PointInformation();
-            pointInformation.setLon(lon);
-            pointInformation.setLat(lat);
-            pointInformation.setX(x);
-            pointInformation.setY(y);
-            pointInformation.setWidth(width);
-            pointInformation.setHeight(height);
-            pointInformation.setBounds(getExtend());
-            mapClicked(pointInformation);
-        }
-    }
+//    /**
+//     * Receive and handle events and other variable changes from the client.
+//     * 
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void changeVariables(Object source, Map<String, Object> variables) {
+//        super.changeVariables(source, variables);
+//        if (variables.containsKey("top")) {
+//            updateExtent(variables);
+//            fireEvent(new ExtentChangeEvent());
+//        }
+//
+//        // Actions
+//        if (variables.containsKey("action")) {
+//            String string = (String) variables.get("action");
+//            final StringTokenizer st = new StringTokenizer(string, ",");
+//            if (st.countTokens() == 2) {
+//                final String coords = st.nextToken();
+//                String[] split = coords.split(":");
+//                Point point = new Point(Double.parseDouble(split[0]),
+//                        Double.parseDouble(split[1]));
+//                final Action action = (Action) actionMapper.get(st.nextToken());
+//
+//                if (action != null && actionHandlers != null) {
+//                    for (Action.Handler ah : actionHandlers) {
+//                        ah.handleAction(action, this, point);
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (variables.containsKey("clicked")) {
+//            double lon = (Double) variables.get("lon");
+//            double lat = (Double) variables.get("lat");
+//            int x = (Integer) variables.get("x");
+//            int y = (Integer) variables.get("y");
+//            int width = (Integer) variables.get("width");
+//            int height = (Integer) variables.get("height");
+//            PointInformation pointInformation = new PointInformation();
+//            pointInformation.setLon(lon);
+//            pointInformation.setLat(lat);
+//            pointInformation.setX(x);
+//            pointInformation.setY(y);
+//            pointInformation.setWidth(width);
+//            pointInformation.setHeight(height);
+//            pointInformation.setBounds(getExtend());
+//            mapClicked(pointInformation);
+//        }
+//    }
 
     protected void updateExtent(Map<String, Object> variables) {
         int zoom = (Integer) variables.get("zoom");
@@ -438,7 +438,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     private void paintActions(PaintTarget target, final Set<Action> actionSet)
             throws PaintException {
         if (!actionSet.isEmpty()) {
-            target.addVariable(this, "action", "");
+//            target.addVariable(this, "action", "");
             target.startTag("actions");
             for (Action a : actionSet) {
                 target.startTag("action");
@@ -577,6 +577,12 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     public void removeListener(ExtentChangeListener listener) {
         removeListener(ExtentChangeEvent.class, listener);
+    }
+
+    @Override
+    public int getComponentCount() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

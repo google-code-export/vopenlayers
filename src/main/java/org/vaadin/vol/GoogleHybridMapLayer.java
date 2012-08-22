@@ -1,8 +1,5 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VGoogleHybridMapLayer;
-
-import com.vaadin.ui.ClientWidget;
 
 /**
  * Google hybrid (satellite+streets) layer that can be added to {@link OpenLayersMap}.
@@ -16,7 +13,7 @@ import com.vaadin.ui.ClientWidget;
  *  &lt;script src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"&gt;&lt;/script&gt;
  * </code>
  */
-@ClientWidget(VGoogleHybridMapLayer.class)
+//@ClientWidget(VGoogleHybridMapLayer.class)
 public class GoogleHybridMapLayer extends GoogleStreetMapLayer implements
 		Layer {
 

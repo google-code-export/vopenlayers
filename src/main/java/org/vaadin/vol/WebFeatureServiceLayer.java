@@ -3,13 +3,8 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWebFeatureServiceLayer;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.ClientWidget;
-
-@ClientWidget(VWebFeatureServiceLayer.class)
+//@ClientWidget(VWebFeatureServiceLayer.class)
 public class WebFeatureServiceLayer extends AbstractAutoPopulatedVectorLayer implements Layer {
     private String uri = "";
     private String featureType = "basic";
@@ -20,12 +15,12 @@ public class WebFeatureServiceLayer extends AbstractAutoPopulatedVectorLayer imp
 
     }
     
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        target.addAttribute("uri", uri);
-        target.addAttribute("featureType", featureType);
-        target.addAttribute("featureNS", featureNS);
-    }
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        super.paintContent(target);
+//        target.addAttribute("uri", uri);
+//        target.addAttribute("featureType", featureType);
+//        target.addAttribute("featureNS", featureNS);
+//    }
     
     public void setUri(String uri) {
         this.uri = uri;

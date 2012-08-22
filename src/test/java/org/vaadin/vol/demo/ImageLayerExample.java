@@ -12,6 +12,7 @@ import org.vaadin.vol.VectorLayer.VectorDrawnListener;
 import org.vaadin.vol.WebMapServiceLayer;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 
 public class ImageLayerExample extends AbstractVOLTest {
 
@@ -51,7 +52,7 @@ public class ImageLayerExample extends AbstractVOLTest {
             public void vectorDrawn(VectorDrawnEvent event) {
                 Vector vector = event.getVector();
                 vectorLayer.addComponent(vector);
-                getWindow().showNotification(
+                Notification.show(
                         "Route drawn with points: "
                                 + Arrays.toString(vector.getPoints()));
             }

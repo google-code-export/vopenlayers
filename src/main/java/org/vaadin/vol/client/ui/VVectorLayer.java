@@ -28,13 +28,14 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
-public class VVectorLayer extends FlowPanel implements VLayer, Container {
+public class VVectorLayer extends FlowPanel implements VLayer 
+//,Container
+{
 
     private VectorLayer vectors;
     private String drawingMode = "NONE";
@@ -81,8 +82,9 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         for (Widget w : getChildren()) {
                             VAbstractVector v = (VAbstractVector) w;
                             if (v.getVector() == vector) {
-                                client.updateVariable(paintableId, "vsel", v,
-                                        true);
+//                                // FIXME
+//                                client.updateVariable(paintableId, "vsel", v,
+//                                        true);
                             }
                         }
                     }
@@ -107,8 +109,9 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                             v.revertDefaultIntent();
                             if (client.hasEventListeners(VVectorLayer.this,
                                     "vusel")) {
-                                client.updateVariable(paintableId, "vusel", v,
-                                        true);
+//                                // FIXME
+//                                client.updateVariable(paintableId, "vusel", v,
+//                                        true);
                                 break;
                             }
                         }
@@ -163,8 +166,9 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                                         .next();
                                 Vector vector = next.getVector();
                                 if (vector == modifiedFeature) {
-                                    client.updateVariable(paintableId,
-                                            "modifiedVector", next, immediate);
+//                                    // FIXME
+//                                    client.updateVariable(paintableId,
+//                                            "modifiedVector", next, immediate);
                                     break;
                                 }
                             }

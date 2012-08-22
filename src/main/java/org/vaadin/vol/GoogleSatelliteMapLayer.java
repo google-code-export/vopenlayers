@@ -1,8 +1,5 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VGoogleSatelliteMapLayer;
-
-import com.vaadin.ui.ClientWidget;
 
 /**
  * Google satellite layer that can be added to {@link OpenLayersMap}.
@@ -16,7 +13,7 @@ import com.vaadin.ui.ClientWidget;
  *  &lt;script src="http://maps.google.com/maps/api/js?v=3.2&amp;sensor=false"&gt;&lt;/script&gt;
  * </code>
  */
-@ClientWidget(VGoogleSatelliteMapLayer.class)
+//@ClientWidget(VGoogleSatelliteMapLayer.class)
 public class GoogleSatelliteMapLayer extends GoogleStreetMapLayer implements
 		Layer {
 

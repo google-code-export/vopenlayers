@@ -28,6 +28,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 
 public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
@@ -123,8 +124,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         vectorLayer.addListener(new ComponentDetachListener() {
             public void componentDetachedFromContainer(
                     ComponentDetachEvent event) {
-                vectorLayer.getWindow().showNotification(
-                        "Vector removed (Component detach event).");
+                Notification.show("Vector removed (Component detach event).");
             }
         });
 
@@ -148,13 +148,11 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
                         if (vectorLayer.getDrawindMode() == DrawingMode.MODIFY) {
                             vectorLayer.setDrawindMode(DrawingMode.NONE);
                             vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
-                            vectorLayer.getWindow().showNotification(
-                                    "Selections only");
+                            Notification.show("Selections only");
                         } else {
                             vectorLayer.setSelectionMode(SelectionMode.NONE);
                             vectorLayer.setDrawindMode(DrawingMode.MODIFY);
-                            vectorLayer.getWindow().showNotification(
-                                    "Modifications allowed");
+                            Notification.show("Modifications allowed");
                         }
                     }
                 }));
@@ -223,7 +221,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
     }
 
     public void vectorModified(VectorModifiedEvent event) {
-        vectorLayer.getWindow().showNotification(
+        Notification.show(
                 "Vector modified::" + event.getVector().getDebugId());
     }
 

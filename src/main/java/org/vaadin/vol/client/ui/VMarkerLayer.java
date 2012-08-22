@@ -3,7 +3,7 @@ package org.vaadin.vol.client.ui;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Container;
+//import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -15,7 +15,9 @@ import java.util.Set;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
 
-public class VMarkerLayer extends FlowPanel implements VLayer, Container {
+public class VMarkerLayer extends FlowPanel implements VLayer
+//, Container
+{
 
     private MarkerLayer markers;
     private String name;

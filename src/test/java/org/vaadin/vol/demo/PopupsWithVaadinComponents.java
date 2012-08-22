@@ -9,6 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
@@ -41,7 +42,7 @@ public class PopupsWithVaadinComponents extends AbstractVOLTest {
         c.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                getWindow().showNotification("Use any vaadin stuff here like in a window");
+                Notification.show("Use any vaadin stuff here like in a window");
             }
         });
         

@@ -3,67 +3,28 @@ package org.vaadin.vol.demo;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.vaadin.Application;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.WrappedRequest;
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.Root;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.ResizeEvent;
 
-public class VolApplication extends Application {
+public class VolApplication extends Root {
 
     private Container testClassess;
-
-    @Override
-    public Window getWindow(String name) {
-        Window window = super.getWindow(name);
-        if (window == null && name != null && !"".equals(name)
-                && !name.contains(".ico") && name.matches("[A-Z][a-z].*")) {
-            try {
-
-                String className = getClass().getPackage().getName() + "."
-                        + name;
-                Class<?> forName = Class.forName(className);
-                if (forName != null) {
-                    Window newInstance = (Window) forName.newInstance();
-                    window = newInstance;
-                    addWindow(window);
-                }
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
-        return window;
+    
+    public VolApplication() {
+        // TODO Auto-generated constructor stub
     }
 
-    @Override
-    public void init() {
-        Window window = new Window("VOL tests and demos");
-        window.setImmediate(true);
-        window.addListener(new Window.ResizeListener() {
-            public void windowResized(ResizeEvent e) {
-                // hack to do test case loading only when first UIDL request is
-                // done.
-                loadTestClasses(e.getWindow());
-            }
-        });
-        setMainWindow(window);
-    }
-
-    private void loadTestClasses(Window window) {
+    private void loadTestClasses(ComponentContainer window) {
         window.addComponent(new Label(
                 "Note, all tests below might not work! "
                         + "They are mostly code examples and tests that might e.g."
@@ -81,7 +42,7 @@ public class VolApplication extends Application {
                 String name = (String) source.getItem(itemId)
                         .getItemProperty(columnId).getValue();
                 Link link = new Link(name,
-                        new ExternalResource(getURL() + name));
+                        new ExternalResource(getApplication().getURL() + name));
                 link.setTargetName("_new");
                 return link;
             }
@@ -94,7 +55,7 @@ public class VolApplication extends Application {
                 return new Label(description);
             }
         });
-        table.setSizeFull();
+        table.setWidth("100%");
         table.setColumnExpandRatio("description", 1);
         window.addComponent(table);
     }
@@ -153,6 +114,35 @@ public class VolApplication extends Application {
             item.getItemProperty("Suitble as online demo").setValue(
                     newInstance.isSuitebleOnlineDemo());
         }
+    }
+
+    @Override
+    protected void init(WrappedRequest request) {
+        String name = request.getRequestPathInfo().substring(1);
+            try {
+
+                String className = getClass().getPackage().getName() + "."
+                        + name;
+                Class<?> forName = Class.forName(className);
+                if (forName != null) {
+                    AbstractVOLTest newInstance = (AbstractVOLTest) forName.newInstance();
+                    setContent(newInstance);
+                }
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            CssLayout cssLayout = new CssLayout();
+            loadTestClasses(cssLayout);
+            setContent(cssLayout);
+
     }
 
 }

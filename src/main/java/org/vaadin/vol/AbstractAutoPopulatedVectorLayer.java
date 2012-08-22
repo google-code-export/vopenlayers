@@ -29,34 +29,34 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         super();
     }
     
-    @SuppressWarnings("unchecked")
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-        super.changeVariables(source, variables);
-        String fid = (String) variables.get("fid");
-        Map<String,Object> attr = (Map<String, Object>) variables.get("attr");
-        String wkt = (String) variables.get("wkt");
-        featureSelected(fid, attr, wkt);
-        
-        // TODO create unselected event
-    }
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public void changeVariables(Object source, Map<String, Object> variables) {
+//        super.changeVariables(source, variables);
+//        String fid = (String) variables.get("fid");
+//        Map<String,Object> attr = (Map<String, Object>) variables.get("attr");
+//        String wkt = (String) variables.get("wkt");
+//        featureSelected(fid, attr, wkt);
+//        
+//        // TODO create unselected event
+//    }
 
     private void featureSelected(String fid, Map<String, Object> attr, String wkt) {
     	FeatureSelectedEvent featureSelectedEvent = new FeatureSelectedEvent(this, fid, attr, wkt);
     	fireEvent(featureSelectedEvent);
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        target.addAttribute("display", displayName);
-        if (projection != null) {
-            target.addAttribute("projection", projection);
-        }
-        if (stylemap != null) {
-            stylemap.paint(target);
-        }
-    }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        super.paintContent(target);
+//        target.addAttribute("display", displayName);
+//        if (projection != null) {
+//            target.addAttribute("projection", projection);
+//        }
+//        if (stylemap != null) {
+//            stylemap.paint(target);
+//        }
+//    }
 
     /**
      * @return the stylemap

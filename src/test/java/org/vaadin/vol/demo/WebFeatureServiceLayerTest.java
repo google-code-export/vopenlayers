@@ -11,6 +11,7 @@ import org.vaadin.vol.WebFeatureServiceLayer;
 import org.vaadin.vol.WebMapServiceLayer;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 
 /**
  * http://openlayers.org/dev/examples/wfs-states.js
@@ -39,7 +40,7 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
                 System.err.println("Selected feature id:" + featureId);
                 Object state = event.getAttributes().get("STATE_NAME");
                 Object persons = event.getAttributes().get("PERSONS");
-                showNotification("State: " + state + " (population:" + persons
+                Notification.show("State: " + state + " (population:" + persons
                         + ")");
             }
         });

@@ -20,6 +20,7 @@ public class VMarker extends Widget implements VMarkable {
     protected Marker marker;
     protected String paintableId;
     protected ApplicationConnection client;
+    private String pid;
 
     public VMarker() {
         setElement(Document.get().createDivElement());
@@ -37,7 +38,7 @@ public class VMarker extends Widget implements VMarkable {
         if (client.updateComponent(this, childUIDL, false)) {
             return;
         }
-
+        this.pid = childUIDL.getId();
         this.client = client;
         this.paintableId = childUIDL.getStringAttribute("id");
 
@@ -84,7 +85,7 @@ public class VMarker extends Widget implements VMarkable {
             this.marker.addClickHandler(new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-                    client.updateVariable(client.getPid(paintable), "click",
+                    client.updateVariable(pid, "click",
                             "", true);
                 }
             });

@@ -1,12 +1,9 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWebMapServiceLayerStyled;
-
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.ClientWidget;
 
-@ClientWidget(VWebMapServiceLayerStyled.class)
+//@ClientWidget(VWebMapServiceLayerStyled.class)
 public class WebMapServiceLayerStyled extends WebMapServiceLayer {
 
 	private String sld = "";

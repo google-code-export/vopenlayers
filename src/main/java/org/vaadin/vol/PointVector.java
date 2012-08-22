@@ -1,10 +1,7 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VPointVector;
 
-import com.vaadin.ui.ClientWidget;
-
-@ClientWidget(VPointVector.class)
+//@ClientWidget(VPointVector.class)
 public class PointVector extends Vector {
 	
 	public PointVector(double x, double y) {

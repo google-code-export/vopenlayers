@@ -5,8 +5,6 @@ package org.vaadin.vol;
 
 import java.util.Map;
 
-import org.vaadin.vol.client.ui.VMarker;
-
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.terminal.ExternalResource;
@@ -14,10 +12,9 @@ import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
 
 @SuppressWarnings("serial")
-@ClientWidget(VMarker.class)
+//@ClientWidget(VMarker.class)
 public class Marker extends AbstractComponent {
 	private double lon;
 	private double lat;
@@ -81,12 +78,12 @@ public class Marker extends AbstractComponent {
 		removeListener(ClickEvent.class, listener);
 	}
 
-	@Override
-	public void changeVariables(Object source, Map<String, Object> variables) {
-		super.changeVariables(source, variables);
-		if (variables.containsKey("click")) {
-			fireEvent(new ClickEvent(this, null));
-		}
-	}
+//	@Override
+//	public void changeVariables(Object source, Map<String, Object> variables) {
+//		super.changeVariables(source, variables);
+//		if (variables.containsKey("click")) {
+//			fireEvent(new ClickEvent(this, null));
+//		}
+//	}
 
 }

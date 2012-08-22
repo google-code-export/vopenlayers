@@ -5,6 +5,7 @@ import org.vaadin.vol.OpenLayersMap.ExtentChangeEvent;
 import org.vaadin.vol.OpenStreetMapLayer;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 
 public class ExtentChange extends AbstractVOLTest {
 
@@ -26,7 +27,7 @@ public class ExtentChange extends AbstractVOLTest {
 
         map.addListener(new OpenLayersMap.ExtentChangeListener() {
             public void extentChanged(ExtentChangeEvent event) {
-                getWindow().showNotification(
+                Notification.show(
                         "Current extent is: "
                                 + event.getComponent().getExtend());
 

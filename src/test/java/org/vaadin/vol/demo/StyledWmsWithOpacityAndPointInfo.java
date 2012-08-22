@@ -11,6 +11,7 @@ import org.vaadin.vol.WebMapServiceLayerStyled;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Slider;
 import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 
@@ -96,8 +97,8 @@ public class StyledWmsWithOpacityAndPointInfo extends AbstractVOLTest {
 			
 			public void mapClicked(MapClickEvent event) {
 				PointInformation info = event.getPointInfo();
-				 showNotification("Point Information", info.toString(),
-			                Notification.TYPE_WARNING_MESSAGE, true);
+				Notification.show("Point Information " +  info.toString(),
+                                        Notification.TYPE_WARNING_MESSAGE);
 			}
 		});
         map.setImmediate(true);

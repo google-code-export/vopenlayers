@@ -56,20 +56,20 @@ public abstract class Vector extends AbstractComponent {
         requestRepaint();
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        target.addAttribute("points", getPoints());
-        if(getProjection() != null) {
-            target.addAttribute("projection", getProjection());
-        }
-        if (style != null) {
-            style.paint("olStyle", target);
-        }
-        if (vectAttributes != null) {
-            vectAttributes.paint("olVectAttributes", target);
-        }
-    }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        super.paintContent(target);
+//        target.addAttribute("points", getPoints());
+//        if(getProjection() != null) {
+//            target.addAttribute("projection", getProjection());
+//        }
+//        if (style != null) {
+//            style.paint("olStyle", target);
+//        }
+//        if (vectAttributes != null) {
+//            vectAttributes.paint("olVectAttributes", target);
+//        }
+//    }
     
     public void select() {
         if(getParent() != null) {

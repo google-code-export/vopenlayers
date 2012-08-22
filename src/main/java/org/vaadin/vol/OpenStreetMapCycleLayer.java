@@ -3,9 +3,6 @@
  */
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VOpenStreetMapCycleLayer;
-
-import com.vaadin.ui.ClientWidget;
 
 /**
  * OpenCycleMap (OpenStreetMaps sister project) layer that can be added to
@@ -20,7 +17,7 @@ import com.vaadin.ui.ClientWidget;
  *  &lt;script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"&gt;&lt;/script&gt;
  * </code>
  */
-@ClientWidget(VOpenStreetMapCycleLayer.class)
+//@ClientWidget(VOpenStreetMapCycleLayer.class)
 public class OpenStreetMapCycleLayer extends OpenStreetMapLayer implements
         Layer {
 

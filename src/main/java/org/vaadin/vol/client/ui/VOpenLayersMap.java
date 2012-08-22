@@ -23,7 +23,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Container;
+//import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -37,7 +37,9 @@ import com.vaadin.terminal.gwt.client.ui.TreeAction;
  * Client side widget which communicates with the server. Messages from the
  * server are shown as HTML and mouse clicks are sent to the server.
  */
-public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner {
+public class VOpenLayersMap extends FlowPanel implements 
+//Container, 
+ActionOwner {
 
     /** Set the CSS class name to allow styling. */
     public static final String CLASSNAME = "v-openlayersmap";
@@ -244,7 +246,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                     continue;
                 }
                 orphanedcomponents.remove(layerUidl.getId());
-                Paintable paintable = client.getPaintable(layerUidl);
+                Paintable paintable = (Paintable) client.getPaintable(layerUidl).getWidget();
                 if (!components.containsKey(layerUidl.getId())) {
                     components.put(layerUidl.getId(), (Widget) paintable);
                     fakePaintables.add((Widget) paintable);

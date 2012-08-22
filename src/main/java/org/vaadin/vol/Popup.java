@@ -8,21 +8,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.vaadin.vol.client.ui.VPopup;
-
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.ClientWidget;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
 @SuppressWarnings("serial")
-@ClientWidget(VPopup.class)
+//@ClientWidget(VPopup.class)
 public class Popup extends AbstractComponentContainer {
 
     public class CloseEvent extends Event {
@@ -105,25 +102,25 @@ public class Popup extends AbstractComponentContainer {
         }
     }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        target.addAttribute("lon", point.getLon());
-        target.addAttribute("lat", point.getLat());
-        target.addAttribute("pr", projection);
-        target.addAttribute("style", popupstyle.toString());
-        target.addAttribute("closable", isClosable());
-        if (anchor == null
-                && (popupstyle == PopupStyle.FRAMED
-                        || popupstyle == PopupStyle.ANCHORED || popupstyle == PopupStyle.ANCHORED_BUBBLE)) {
-            throw new IllegalStateException(
-                    "Anchor elemen hasn't been defined, but is required for this type of popup.");
-        }
-        if (anchor != null) {
-            target.addAttribute("anchor", anchor);
-        }
-        content.paint(target);
-    }
+//    @Override
+//    public void paintContent(PaintTarget target) throws PaintException {
+//        super.paintContent(target);
+//        target.addAttribute("lon", point.getLon());
+//        target.addAttribute("lat", point.getLat());
+//        target.addAttribute("pr", projection);
+//        target.addAttribute("style", popupstyle.toString());
+//        target.addAttribute("closable", isClosable());
+//        if (anchor == null
+//                && (popupstyle == PopupStyle.FRAMED
+//                        || popupstyle == PopupStyle.ANCHORED || popupstyle == PopupStyle.ANCHORED_BUBBLE)) {
+//            throw new IllegalStateException(
+//                    "Anchor elemen hasn't been defined, but is required for this type of popup.");
+//        }
+//        if (anchor != null) {
+//            target.addAttribute("anchor", anchor);
+//        }
+//        content.paint(target);
+//    }
 
     public void addClickListener(ClickListener listener) {
         addListener("click", ClickEvent.class, listener,
@@ -134,21 +131,21 @@ public class Popup extends AbstractComponentContainer {
         removeListener(ClickEvent.class, listener);
     }
 
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-        super.changeVariables(source, variables);
-        if (variables.containsKey("close")) {
-            if (hasListeners(CloseEvent.class)) {
-                fireEvent(new CloseEvent());
-            } else {
-                Component parent2 = getParent();
-                if (parent2 instanceof OpenLayersMap) {
-                    OpenLayersMap olm = (OpenLayersMap) parent2;
-                    olm.removeComponent(this);
-                }
-            }
-        }
-    }
+//    @Override
+//    public void changeVariables(Object source, Map<String, Object> variables) {
+//        super.changeVariables(source, variables);
+//        if (variables.containsKey("close")) {
+//            if (hasListeners(CloseEvent.class)) {
+//                fireEvent(new CloseEvent());
+//            } else {
+//                Component parent2 = getParent();
+//                if (parent2 instanceof OpenLayersMap) {
+//                    OpenLayersMap olm = (OpenLayersMap) parent2;
+//                    olm.removeComponent(this);
+//                }
+//            }
+//        }
+//    }
 
     public void setPopupStyle(PopupStyle style) {
         popupstyle = style;
@@ -202,5 +199,11 @@ public class Popup extends AbstractComponentContainer {
 
     public void setContent(Table table) {
         addComponent(table);
+    }
+
+    @Override
+    public int getComponentCount() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

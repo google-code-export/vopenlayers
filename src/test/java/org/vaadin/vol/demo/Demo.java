@@ -44,6 +44,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -135,8 +136,7 @@ public class Demo extends AbstractVOLTest {
         vectorLayer.addListener(new VectorSelectedListener() {
             public void vectorSelected(VectorSelectedEvent event) {
                 Vector vector = event.getVector();
-                vectorLayer.getWindow().showNotification(
-                        "Selected vector with points "
+                Notification.show("Selected vector with points "
                                 + Arrays.deepToString(vector.getPoints()));
             }
         });
@@ -200,12 +200,12 @@ public class Demo extends AbstractVOLTest {
         stylemap.setStyle(new RenderIntent("red"), style);
         Style markerStyle = new Style();
         markerStyle
-                .setExternalGraphic(getURL()
+                .setExternalGraphic(getApplication().getURL()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
         markerStyle.setGraphicZIndex(11);
         markerStyle.setGraphicSize(16, 21);
         markerStyle
-                .setBackgroundGraphic(getURL()
+                .setBackgroundGraphic(getApplication().getURL()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
         markerStyle.setBackgroundYOffset(-7);
         markerStyle.setBackgroundXOffset(0);
@@ -280,7 +280,7 @@ public class Demo extends AbstractVOLTest {
                         || mode == DrawingMode.NONE) {
                     vectorLayer.setDrawindMode(mode);
                 } else {
-                    showNotification("Sorry, feature is on TODO list. Try area.");
+                    Notification.show("Sorry, feature is on TODO list. Try area.");
                 }
             }
         });
@@ -291,15 +291,13 @@ public class Demo extends AbstractVOLTest {
             public void vectorDrawn(VectorDrawnEvent event) {
                 Vector vector = event.getVector();
                 vectorLayer.addVector(vector);
-                vectorLayer.getWindow().showNotification(
-                        "Vector drawn:" + vector);
+                Notification.show("Vector drawn:" + vector);
             }
         });
 
         vectorLayer.addListener(new VectorLayer.VectorModifiedListener() {
             public void vectorModified(VectorModifiedEvent event) {
-                vectorLayer.getWindow().showNotification(
-                        "Vector modified:" + event.getVector());
+                Notification.show("Vector modified:" + event.getVector());
             }
         });
 
