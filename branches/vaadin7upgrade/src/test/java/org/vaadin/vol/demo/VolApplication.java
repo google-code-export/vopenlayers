@@ -127,6 +127,7 @@ public class VolApplication extends Root {
                 if (forName != null) {
                     AbstractVOLTest newInstance = (AbstractVOLTest) forName.newInstance();
                     setContent(newInstance);
+                    return;
                 }
             } catch (ClassNotFoundException e) {
                 // TODO Auto-generated catch block
