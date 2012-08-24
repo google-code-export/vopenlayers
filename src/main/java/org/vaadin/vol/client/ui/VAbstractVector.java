@@ -32,7 +32,7 @@ public abstract class VAbstractVector extends Widget implements Paintable {
      */
     public void updateFromUIDL(UIDL childUIDL,
             final ApplicationConnection client) {
-        if (client.updateComponent(this, childUIDL, false)) {
+        if (client.updateComponent(this, childUIDL, true)) {
             return;
         }
         if (childUIDL.hasAttribute("projection")) {

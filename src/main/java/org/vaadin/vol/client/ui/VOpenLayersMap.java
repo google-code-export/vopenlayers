@@ -15,6 +15,8 @@ import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.user.client.Element;
@@ -37,9 +39,9 @@ import com.vaadin.terminal.gwt.client.ui.TreeAction;
  * Client side widget which communicates with the server. Messages from the
  * server are shown as HTML and mouse clicks are sent to the server.
  */
-public class VOpenLayersMap extends FlowPanel implements 
-//Container, 
-ActionOwner {
+public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner {
+
+    private Map map = new Map();
 
     /** Set the CSS class name to allow styling. */
     public static final String CLASSNAME = "v-openlayersmap";
@@ -58,8 +60,6 @@ ActionOwner {
     // private MarkerLayer markerLayer;
 
     HashMap<String, Widget> components = new HashMap<String, Widget>();
-
-    private Map map = new Map();
 
     FlowPanel fakePaintables = new FlowPanel();
 
@@ -140,7 +140,9 @@ ActionOwner {
     /**
      * Called whenever an update is received from the server
      */
-    public void updateFromUIDL(UIDL uidl, final ApplicationConnection client) {
+    public void updateFromUIDL(final UIDL uidl,
+            final ApplicationConnection client) {
+        VConsole.error("VOpenLayersMap attached?" + isAttached());
 
         // This call should be made first.
         // It handles sizes, captions, tooltips, etc. automatically.
@@ -166,7 +168,7 @@ ActionOwner {
             extentChangeListener = new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-                    
+
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);
                     Bounds extent = map.getExtent();
@@ -246,43 +248,57 @@ ActionOwner {
                     continue;
                 }
                 orphanedcomponents.remove(layerUidl.getId());
-                Paintable paintable = (Paintable) client.getPaintable(layerUidl).getWidget();
+                Paintable paintable = (Paintable) client
+                        .getPaintable(layerUidl).getWidget();
                 if (!components.containsKey(layerUidl.getId())) {
                     components.put(layerUidl.getId(), (Widget) paintable);
                     fakePaintables.add((Widget) paintable);
                 }
-                paintable.updateFromUIDL(layerUidl, client);
+                // This gets called with fake update in Vaadin 7
+                // paintable.updateFromUIDL(layerUidl, client);
 
             }
         }
+        // Defer as paints are not hierachical in Vaadin 7, depends on baselayer that is not necessary set yet
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
-        if (uidl.hasAttribute("re_top")) {
-            Bounds bounds = Bounds.create(uidl.getDoubleAttribute("re_left"),
-                    uidl.getDoubleAttribute("re_bottom"),
-                    uidl.getDoubleAttribute("re_right"),
-                    uidl.getDoubleAttribute("re_top"));
-            bounds.transform(getProjection(), getMap().getProjection());
-            map.setRestrictedExtent(bounds);
-        }
+            @Override
+            public void execute() {
+                
+                map.updateSize();
+                
+                if (uidl.hasAttribute("re_top")) {
+                    Bounds bounds = Bounds.create(
+                            uidl.getDoubleAttribute("re_left"),
+                            uidl.getDoubleAttribute("re_bottom"),
+                            uidl.getDoubleAttribute("re_right"),
+                            uidl.getDoubleAttribute("re_top"));
+                    bounds.transform(getProjection(), getMap().getProjection());
+                    map.setRestrictedExtent(bounds);
+                }
 
-        updateZoomAndCenter(uidl);
+                updateZoomAndCenter(uidl);
 
-        if (uidl.getBooleanAttribute("componentsPainted")) {
-            for (String id : orphanedcomponents) {
-                Widget remove = components.remove(id);
-                fakePaintables.remove(remove);
+                if (uidl.getBooleanAttribute("componentsPainted")) {
+                    for (String id : orphanedcomponents) {
+                        Widget remove = components.remove(id);
+                        fakePaintables.remove(remove);
+                    }
+                }
+
+                if (uidl.hasAttribute("alb")) {
+                    bodyActionKeys = uidl.getStringArrayAttribute("alb");
+                } else {
+                    // Need to clear the actions if the action handlers have
+                    // been
+                    // removed
+                    bodyActionKeys = null;
+                }
+
+                updateActionMap(uidl);
             }
-        }
+        });
 
-        if (uidl.hasAttribute("alb")) {
-            bodyActionKeys = uidl.getStringArrayAttribute("alb");
-        } else {
-            // Need to clear the actions if the action handlers have been
-            // removed
-            bodyActionKeys = null;
-        }
-
-        updateActionMap(uidl);
     }
 
     private void updateActionMap(UIDL mainUidl) {

@@ -3,11 +3,19 @@ package org.vaadin.vol.demo;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.vaadin.Application;
+import com.vaadin.RootRequiresMoreInformationException;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.WrappedRequest;
+import com.vaadin.terminal.gwt.server.BootstrapFragmentResponse;
+import com.vaadin.terminal.gwt.server.BootstrapListener;
+import com.vaadin.terminal.gwt.server.BootstrapPageResponse;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -16,12 +24,35 @@ import com.vaadin.ui.Root;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 
-public class VolApplication extends Root {
+public class VolApplication extends Application {
 
     private Container testClassess;
-    
+
     public VolApplication() {
-        // TODO Auto-generated constructor stub
+        addBootstrapListener(new BootstrapListener() {
+
+            @Override
+            public void modifyBootstrapPage(BootstrapPageResponse response) {
+                Element h = response.getDocument().getElementsByTag("head").get(0);
+
+                Element s = response.getDocument().createElement("script");
+                s.attr("src", "http://openlayers.org/api/OpenLayers.js");
+                h.appendChild(s);
+                
+                s = response.getDocument().createElement("script");
+                s.attr("src", "http://maps.google.com/maps/api/js?v=3.2&sensor=false");
+                h.appendChild(s);
+                
+
+            }
+
+            @Override
+            public void modifyBootstrapFragment(
+                    BootstrapFragmentResponse response) {
+                // TODO Auto-generated method stub
+
+            }
+        });
     }
 
     private void loadTestClasses(ComponentContainer window) {
@@ -42,7 +73,7 @@ public class VolApplication extends Root {
                 String name = (String) source.getItem(itemId)
                         .getItemProperty(columnId).getValue();
                 Link link = new Link(name,
-                        new ExternalResource(getApplication().getURL() + name));
+                        new ExternalResource(getURL() + name));
                 link.setTargetName("_new");
                 return link;
             }
@@ -117,33 +148,41 @@ public class VolApplication extends Root {
     }
 
     @Override
-    protected void init(WrappedRequest request) {
-        String name = request.getRequestPathInfo().substring(1);
-            try {
+    protected Root getRoot(WrappedRequest request)
+            throws RootRequiresMoreInformationException {
+        Root root = new Root() {
 
-                String className = getClass().getPackage().getName() + "."
-                        + name;
-                Class<?> forName = Class.forName(className);
-                if (forName != null) {
-                    AbstractVOLTest newInstance = (AbstractVOLTest) forName.newInstance();
-                    setContent(newInstance);
-                    return;
+            @Override
+            protected void init(WrappedRequest request) {
+                String name = request.getRequestPathInfo().substring(1);
+                try {
+
+                    String className = getClass().getPackage().getName() + "."
+                            + name;
+                    Class<?> forName = Class.forName(className);
+                    if (forName != null) {
+                        AbstractVOLTest newInstance = (AbstractVOLTest) forName
+                                .newInstance();
+                        setContent(newInstance);
+                        return;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            CssLayout cssLayout = new CssLayout();
-            loadTestClasses(cssLayout);
-            setContent(cssLayout);
 
+                CssLayout cssLayout = new CssLayout();
+                loadTestClasses(cssLayout);
+                setContent(cssLayout);
+            }
+        };
+        return root;
     }
 
 }

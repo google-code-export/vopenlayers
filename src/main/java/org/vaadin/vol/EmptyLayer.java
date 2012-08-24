@@ -8,4 +8,5 @@ public class EmptyLayer extends WebMapServiceLayer {
     public EmptyLayer() {
         this.setBaseLayer(true);
     }
+    
 }

@@ -33,9 +33,7 @@ import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
-public class VVectorLayer extends FlowPanel implements VLayer 
-//,Container
-{
+public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
 
     private VectorLayer vectors;
     private String drawingMode = "NONE";
@@ -82,9 +80,9 @@ public class VVectorLayer extends FlowPanel implements VLayer
                         for (Widget w : getChildren()) {
                             VAbstractVector v = (VAbstractVector) w;
                             if (v.getVector() == vector) {
-//                                // FIXME
-//                                client.updateVariable(paintableId, "vsel", v,
-//                                        true);
+                                // // FIXME
+                                // client.updateVariable(paintableId, "vsel", v,
+                                // true);
                             }
                         }
                     }
@@ -109,9 +107,10 @@ public class VVectorLayer extends FlowPanel implements VLayer
                             v.revertDefaultIntent();
                             if (client.hasEventListeners(VVectorLayer.this,
                                     "vusel")) {
-//                                // FIXME
-//                                client.updateVariable(paintableId, "vusel", v,
-//                                        true);
+                                // // FIXME
+                                // client.updateVariable(paintableId, "vusel",
+                                // v,
+                                // true);
                                 break;
                             }
                         }
@@ -166,9 +165,9 @@ public class VVectorLayer extends FlowPanel implements VLayer
                                         .next();
                                 Vector vector = next.getVector();
                                 if (vector == modifiedFeature) {
-//                                    // FIXME
-//                                    client.updateVariable(paintableId,
-//                                            "modifiedVector", next, immediate);
+                                    // // FIXME
+                                    // client.updateVariable(paintableId,
+                                    // "modifiedVector", next, immediate);
                                     break;
                                 }
                             }
@@ -244,7 +243,7 @@ public class VVectorLayer extends FlowPanel implements VLayer
     }
 
     public void updateFromUIDL(UIDL layer, ApplicationConnection client) {
-        if (client.updateComponent(this, layer, false)) {
+        if (client.updateComponent(this, layer, true)) {
             return;
         }
         this.client = client;
@@ -277,7 +276,7 @@ public class VVectorLayer extends FlowPanel implements VLayer
         for (int i = 0; i < childCount; i++) {
             UIDL childUIDL = layer.getChildUIDL(i);
             VAbstractVector vector = (VAbstractVector) client
-                    .getPaintable(childUIDL);
+                    .getPaintable(childUIDL).getWidget();
             boolean isNew = !hasChildComponent(vector);
             if (isNew) {
                 add(vector);
@@ -316,7 +315,7 @@ public class VVectorLayer extends FlowPanel implements VLayer
                     // ensure selection
                     if (drawingMode == "MODIFY") {
                         ModifyFeature mf = (ModifyFeature) df.cast();
-                        if(mf.getModifiedFeature() != null) {
+                        if (mf.getModifiedFeature() != null) {
                             mf.unselect(mf.getModifiedFeature());
                         }
                         mf.select(selectedVector.getVector());
@@ -336,7 +335,8 @@ public class VVectorLayer extends FlowPanel implements VLayer
                     try {
                         selectFeature.unselectAll();
                     } catch (Exception e) {
-                        // NOP, may throw exception if selected vector gets deleted
+                        // NOP, may throw exception if selected vector gets
+                        // deleted
                     }
                 }
             }
@@ -348,9 +348,9 @@ public class VVectorLayer extends FlowPanel implements VLayer
         if (drawingMode != newDrawingMode) {
             if (drawingMode != "NONE") {
                 // remove old drawing feature
-                if(drawingMode == "MODIFY") {
+                if (drawingMode == "MODIFY") {
                     ModifyFeature mf = df.cast();
-                    if(mf.getModifiedFeature() != null) {
+                    if (mf.getModifiedFeature() != null) {
                         mf.unselect(mf.getModifiedFeature());
                     }
                 }

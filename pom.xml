@@ -61,13 +61,14 @@
 				<version>2.5.0-rc1</version>
 				<configuration>
 					<webappDirectory>${project.build.directory}/testwebapp/VAADIN/widgetsets</webappDirectory>
-					<extraJvmArgs>-Xmx1024M -Xss1024k</extraJvmArgs>
+					<extraJvmArgs>-Xmx2024M -Xss1024k</extraJvmArgs>
 					<hostedWebapp>${project.build.directory}/testwebapp</hostedWebapp>
 					<noServer>true</noServer>
 					<module>org.vaadin.vol.demo.VolExampleAppWidgetset</module>
 					<runTarget>http://localhost:9998/</runTarget>
 					<draftCompile>true</draftCompile>
 					<style>PRETTY</style>
+					<force>true</force>
 				</configuration>
 			</plugin>
 
@@ -124,6 +125,16 @@
 			<id>vaadin-addons</id>
 			<url>http://maven.vaadin.com/vaadin-addons</url>
 		</repository>
+		<repository>
+        <id>vaadin-snapshots</id>
+        <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+        <releases>
+           <enabled>false</enabled>
+        </releases>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>        
+     </repository>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
 			<name>Java.net Maven 2 Repository</name>

@@ -36,7 +36,7 @@ public class VolTestServer {
                 ApplicationServlet.class);
         servletHolder.setInitParameter("widgetset",
                 "org.vaadin.vol.demo.VolExampleAppWidgetset");
-        servletHolder.setInitParameter("root",
+        servletHolder.setInitParameter("application",
                 VolApplication.class.getName());
 
         File file = new File("./target/testwebapp");
