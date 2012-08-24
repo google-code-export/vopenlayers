@@ -4,12 +4,16 @@ import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 import org.vaadin.vol.client.wrappers.popup.Popup;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ScriptElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.XMLHttpRequest;
+import com.vaadin.terminal.gwt.client.VConsole;
 
 /**
  * A widget that contains open layers map. Proxys all relevant OpenLayers map
@@ -28,8 +32,51 @@ public class Map extends Widget {
     @SuppressWarnings("unchecked")
     private JsArray<Control> initialControls = (JsArray<Control>) JsArray
             .createArray();
+    
+    
+    public static class SynchronousXHR extends XMLHttpRequest {
 
+        protected SynchronousXHR() {
+        }
+
+        public native final void synchronousGet(String uri)
+        /*-{
+            try {
+                this.open("GWT", uri, false);
+                this.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+                this.send();
+            } catch (e) {
+               // No errors are managed as this is synchronous forceful send that can just fail
+            }
+        }-*/;
+
+    }
+    
+    private static native boolean isOLLoaded() 
+    /*-{
+        return typeof $wnd.OpenLayers !== "undefined";
+     }-*/;
+    
+
+    private static void injectScript(String responseText) {
+        ScriptElement createScriptElement = Document.get().createScriptElement();
+        createScriptElement.setInnerHTML(responseText);
+        Document.get().getElementsByTagName("head").getItem(0).appendChild(createScriptElement);
+    }
+    
     public Map() {
+        if(!isOLLoaded()) {
+            VConsole.error(GWT.getModuleBaseForStaticFiles());
+            SynchronousXHR xhr = (SynchronousXHR) SynchronousXHR.create();
+            xhr.synchronousGet(GWT.getModuleBaseForStaticFiles() + "OpenLayers.js");
+            String responseText = xhr.getResponseText();
+            injectScript(responseText);
+            xhr = (SynchronousXHR) SynchronousXHR.create();
+            xhr.synchronousGet(GWT.getModuleBaseForStaticFiles() + "helpers.js");
+            responseText = xhr.getResponseText();
+            injectScript(responseText);
+        }
+        
         setElement(Document.get().createDivElement());
         mapElement = Document.get().createDivElement();
         Style style = mapElement.getStyle();
@@ -141,6 +188,11 @@ public class Map extends Widget {
 
     public LonLat getLonLatFromPixel(Pixel pixel) {
         return getMap().getLonLatFromPixel(pixel);
+    }
+
+
+    public void updateSize() {
+        getMap().updateSize();
     }
 
 }

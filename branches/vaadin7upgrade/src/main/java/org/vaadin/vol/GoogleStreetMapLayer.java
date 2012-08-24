@@ -3,6 +3,11 @@
  */
 package org.vaadin.vol;
 
+import java.util.Map;
+
+import com.vaadin.terminal.PaintException;
+import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.Vaadin6Component;
 import com.vaadin.ui.AbstractComponent;
 
 /**
@@ -17,21 +22,21 @@ import com.vaadin.ui.AbstractComponent;
  * </code>
  */
 //@ClientWidget(VGoogleStreetMapLayer.class)
-public class GoogleStreetMapLayer extends AbstractComponent implements Layer {
+public class GoogleStreetMapLayer extends AbstractComponent implements Layer, Vaadin6Component {
 
 	private String displayName;
 	private String projection;
 	
-//	@Override
-//	public void paintContent(PaintTarget target) throws PaintException {
+	@Override
+	public void paintContent(PaintTarget target) throws PaintException {
 //		super.paintContent(target);
-//		if(projection != null) {
-//			target.addAttribute("projection", projection);
-//		}
-//		if(displayName != null) {
-//			target.addAttribute("displayName", displayName);
-//		}
-//	}
+		if(projection != null) {
+			target.addAttribute("projection", projection);
+		}
+		if(displayName != null) {
+			target.addAttribute("displayName", displayName);
+		}
+	}
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
@@ -48,4 +53,11 @@ public class GoogleStreetMapLayer extends AbstractComponent implements Layer {
 	public String getProjection() {
 		return projection;
 	}
+
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -1,10 +1,13 @@
 package org.vaadin.vol;
 
+import java.util.Map;
+
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.Vaadin6Component;
 import com.vaadin.ui.AbstractComponent;
 
-public abstract class Vector extends AbstractComponent {
+public abstract class Vector extends AbstractComponent implements Vaadin6Component {
 
     private String projection;
 
@@ -56,20 +59,26 @@ public abstract class Vector extends AbstractComponent {
         requestRepaint();
     }
 
-//    @Override
-//    public void paintContent(PaintTarget target) throws PaintException {
+    @Override
+    public void paintContent(PaintTarget target) throws PaintException {
 //        super.paintContent(target);
-//        target.addAttribute("points", getPoints());
-//        if(getProjection() != null) {
-//            target.addAttribute("projection", getProjection());
-//        }
-//        if (style != null) {
-//            style.paint("olStyle", target);
-//        }
-//        if (vectAttributes != null) {
-//            vectAttributes.paint("olVectAttributes", target);
-//        }
-//    }
+        target.addAttribute("points", getPoints());
+        if(getProjection() != null) {
+            target.addAttribute("projection", getProjection());
+        }
+        if (style != null) {
+            style.paint("olStyle", target);
+        }
+        if (vectAttributes != null) {
+            vectAttributes.paint("olVectAttributes", target);
+        }
+    }
+    
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        // TODO Auto-generated method stub
+        
+    }
     
     public void select() {
         if(getParent() != null) {

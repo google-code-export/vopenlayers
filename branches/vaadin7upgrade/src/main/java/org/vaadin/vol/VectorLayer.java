@@ -7,13 +7,19 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
+import com.vaadin.terminal.LegacyPaint;
+import com.vaadin.terminal.PaintException;
+import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.Vaadin6Component;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 
 //@ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
-public class VectorLayer extends AbstractComponentContainer implements Layer {
+public class VectorLayer extends AbstractComponentContainer implements Layer, Vaadin6Component {
 
     private StyleMap stylemap;
 
@@ -40,24 +46,24 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         addComponent(m);
     }
 
-//    @Override
-//    public void paintContent(PaintTarget target) throws PaintException {
-//        target.addAttribute("name", displayName);
-//        target.addAttribute("dmode", drawindMode.toString());
-//        target.addAttribute("smode", selectionMode.toString());
-//        if (selectedVector != null) {
-//            target.addAttribute("svector", selectedVector);
-//        }
-//
-//        if (stylemap != null) {
-//            stylemap.paint(target);
-//        }
-//
-//        for (Vector m : vectors) {
-//            m.paint(target);
-//        }
-//
-//    }
+    @Override
+    public void paintContent(PaintTarget target) throws PaintException {
+        target.addAttribute("name", displayName);
+        target.addAttribute("dmode", drawindMode.toString());
+        target.addAttribute("smode", selectionMode.toString());
+        if (selectedVector != null) {
+            target.addAttribute("svector", selectedVector);
+        }
+
+        if (stylemap != null) {
+            stylemap.paint(target);
+        }
+
+        for (Vector m : vectors) {
+            LegacyPaint.paint(m, target);
+        }
+
+    }
 
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
@@ -99,60 +105,60 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         return drawindMode;
     }
 
-//    @Override
-//    public void changeVariables(Object source, Map<String, Object> variables) {
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
 //        super.changeVariables(source, variables);
-//        // support other drawing modes than area
-//        // TODO make events fired when new object is drawn/edited
-//        if (variables.containsKey("vertices")) {
-//            String[] object = (String[]) variables.get("vertices");
-//            Point[] points = new Point[object.length];
-//            for (int i = 0; i < points.length; i++) {
-//                points[i] = Point.valueOf(object[i]);
-//            }
-//
-//            if (drawindMode == DrawingMode.LINE) {
-//                PolyLine polyline = new PolyLine();
-//                polyline.setPoints(points);
-//                newVectorPainted(polyline);
-//            } else if (drawindMode == DrawingMode.AREA) {
-//                Area area = new Area();
-//                area.setPoints(points);
-//                newVectorPainted(area);
-//            } else if (drawindMode == DrawingMode.MODIFY) {
-//                Vector vector = (Vector) variables.get("modifiedVector");
-//                if (vector != null) {
-//                    vector.setPointsWithoutRepaint(points);
-//                    vectorModified(vector);
-//                } else {
-//                    Logger.getLogger(getClass().getName())
-//                            .severe("Vector modified event didn't provide related vector!?");
-//                }
-//            }
-//        }
-//        if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
-//            Double x = (Double) variables.get("x");
-//            Double y = (Double) variables.get("y");
-//            PointVector point = new PointVector(x, y);
-//            newVectorPainted(point);
-//        }
-//        if (variables.containsKey("vusel")) {
-//            Vector object = (Vector) variables.get("vusel");
-//            if (selectedVector == object) {
-//                selectedVector = null;
-//            }
-//            VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
-//                    this, object);
-//            fireEvent(vectorSelectedEvent);
-//        }
-//        if (variables.containsKey("vsel")) {
-//            Vector object = (Vector) variables.get("vsel");
-//            selectedVector = object;
-//            VectorSelectedEvent vectorSelectedEvent = new VectorSelectedEvent(
-//                    this, object);
-//            fireEvent(vectorSelectedEvent);
-//        }
-//    }
+        // support other drawing modes than area
+        // TODO make events fired when new object is drawn/edited
+        if (variables.containsKey("vertices")) {
+            String[] object = (String[]) variables.get("vertices");
+            Point[] points = new Point[object.length];
+            for (int i = 0; i < points.length; i++) {
+                points[i] = Point.valueOf(object[i]);
+            }
+
+            if (drawindMode == DrawingMode.LINE) {
+                PolyLine polyline = new PolyLine();
+                polyline.setPoints(points);
+                newVectorPainted(polyline);
+            } else if (drawindMode == DrawingMode.AREA) {
+                Area area = new Area();
+                area.setPoints(points);
+                newVectorPainted(area);
+            } else if (drawindMode == DrawingMode.MODIFY) {
+                Vector vector = (Vector) variables.get("modifiedVector");
+                if (vector != null) {
+                    vector.setPointsWithoutRepaint(points);
+                    vectorModified(vector);
+                } else {
+                    Logger.getLogger(getClass().getName())
+                            .severe("Vector modified event didn't provide related vector!?");
+                }
+            }
+        }
+        if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
+            Double x = (Double) variables.get("x");
+            Double y = (Double) variables.get("y");
+            PointVector point = new PointVector(x, y);
+            newVectorPainted(point);
+        }
+        if (variables.containsKey("vusel")) {
+            Vector object = (Vector) variables.get("vusel");
+            if (selectedVector == object) {
+                selectedVector = null;
+            }
+            VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
+                    this, object);
+            fireEvent(vectorSelectedEvent);
+        }
+        if (variables.containsKey("vsel")) {
+            Vector object = (Vector) variables.get("vsel");
+            selectedVector = object;
+            VectorSelectedEvent vectorSelectedEvent = new VectorSelectedEvent(
+                    this, object);
+            fireEvent(vectorSelectedEvent);
+        }
+    }
 
     private void vectorModified(Vector object2) {
         VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this,

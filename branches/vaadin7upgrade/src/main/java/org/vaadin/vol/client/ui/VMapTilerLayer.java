@@ -73,7 +73,7 @@ public class VMapTilerLayer extends VAbstracMapLayer<TileMapServiceLayer> {
     }
 
     @Override
-    protected void attachLayerToMap() {
+    public void attachLayerToMap() {
         TileMapServiceLayer layer2 = getLayer();
         Bounds maxExtent = layer2.getMaxExtent();
         if (maxExtent == null) {
