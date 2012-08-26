@@ -4,10 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import com.vaadin.Application;
-import com.vaadin.RootRequiresMoreInformationException;
+import com.vaadin.UIRequiresMoreInformationException;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -20,9 +19,9 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
-import com.vaadin.ui.Root;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
+import com.vaadin.ui.UI;
 
 public class VolApplication extends Application {
 
@@ -148,9 +147,9 @@ public class VolApplication extends Application {
     }
 
     @Override
-    protected Root getRoot(WrappedRequest request)
-            throws RootRequiresMoreInformationException {
-        Root root = new Root() {
+    protected UI getUI(WrappedRequest request)
+            throws UIRequiresMoreInformationException {
+        UI root = new UI() {
 
             @Override
             protected void init(WrappedRequest request) {
