@@ -30,8 +30,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
+import com.vaadin.terminal.gwt.client.ServerConnector;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.terminal.gwt.client.ValueMap;
+import com.vaadin.terminal.gwt.client.ui.Vaadin6Connector;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
 
@@ -80,9 +82,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
                         for (Widget w : getChildren()) {
                             VAbstractVector v = (VAbstractVector) w;
                             if (v.getVector() == vector) {
-                                // // FIXME
-                                // client.updateVariable(paintableId, "vsel", v,
-                                // true);
+                                client.updateVariable(paintableId, "vsel",
+                                        v.getConnector(), true);
                             }
                         }
                     }
@@ -107,10 +108,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
                             v.revertDefaultIntent();
                             if (client.hasEventListeners(VVectorLayer.this,
                                     "vusel")) {
-                                // // FIXME
-                                // client.updateVariable(paintableId, "vusel",
-                                // v,
-                                // true);
+                                client.updateVariable(paintableId, "vusel",
+                                        v.getConnector(), true);
                                 break;
                             }
                         }
@@ -275,8 +274,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
         int childCount = layer.getChildCount();
         for (int i = 0; i < childCount; i++) {
             UIDL childUIDL = layer.getChildUIDL(i);
-            VAbstractVector vector = (VAbstractVector) client
-                    .getPaintable(childUIDL).getWidget();
+            VAbstractVector vector = (VAbstractVector) client.getPaintable(
+                    childUIDL).getWidget();
             boolean isNew = !hasChildComponent(vector);
             if (isNew) {
                 add(vector);
@@ -309,8 +308,8 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
         }
         if (currentSelectionMode != "NONE" || drawingMode == "MODIFY") {
             if (layer.hasAttribute("svector")) {
-                VAbstractVector selectedVector = (VAbstractVector) layer
-                        .getPaintableAttribute("svector", client);
+                VAbstractVector selectedVector = (VAbstractVector) ((Vaadin6Connector)layer
+                        .getPaintableAttribute("svector", client)).getWidget();
                 if (selectedVector != null) {
                     // ensure selection
                     if (drawingMode == "MODIFY") {

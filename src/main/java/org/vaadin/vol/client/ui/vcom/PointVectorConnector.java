@@ -11,7 +11,9 @@ public class PointVectorConnector extends Vaadin6Connector {
 
     @Override
     public VPointVector getWidget() {
-        return (VPointVector) super.getWidget();
+        VPointVector widget = (VPointVector) super.getWidget();
+        widget.setConnector(this);
+        return widget;
     }
     
     @Override
