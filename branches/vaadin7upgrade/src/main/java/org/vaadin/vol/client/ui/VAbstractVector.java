@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
+import com.vaadin.terminal.gwt.client.ServerConnector;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
@@ -18,6 +19,10 @@ public abstract class VAbstractVector extends Widget implements Paintable {
     protected ValueMap vectAttributes = null;
     private Projection projection;
     private String intent;
+    private UIDL childUIDL;
+    private ApplicationConnection client;
+    
+    private ServerConnector connector;
 
     public VAbstractVector() {
         setElement(Document.get().createDivElement());
@@ -32,6 +37,18 @@ public abstract class VAbstractVector extends Widget implements Paintable {
      */
     public void updateFromUIDL(UIDL childUIDL,
             final ApplicationConnection client) {
+        if(childUIDL.hasAttribute("cached")) {
+            return;
+        }
+        this.childUIDL = childUIDL;
+        this.client = client;
+        DeferredUpdator.update(this);
+    }
+
+    public void reallyDoUpdate() {
+        if(client == null) {
+            return;
+        }
         if (client.updateComponent(this, childUIDL, true)) {
             return;
         }
@@ -62,7 +79,6 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         } else {
             getLayer().addFeature(vector);
         }
-        
     }
 
     private void updateAttributes(UIDL childUIDL, ApplicationConnection client) {
@@ -113,6 +129,14 @@ public abstract class VAbstractVector extends Widget implements Paintable {
     public void revertDefaultIntent() {
         getVector().setRenderIntent(intent);
         getVector().redraw();
+    }
+
+    public ServerConnector getConnector() {
+        return connector;
+    }
+
+    public void setConnector(ServerConnector connector) {
+        this.connector = connector;
     }
 
 }
