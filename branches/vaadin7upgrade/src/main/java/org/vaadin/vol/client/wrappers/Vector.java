@@ -3,7 +3,7 @@ package org.vaadin.vol.client.wrappers;
 import org.vaadin.vol.client.wrappers.geometry.Geometry;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.vaadin.terminal.gwt.client.ValueMap;
+import com.vaadin.client.ValueMap;
 
 public abstract class Vector extends AbstractOpenLayersWrapper {
 

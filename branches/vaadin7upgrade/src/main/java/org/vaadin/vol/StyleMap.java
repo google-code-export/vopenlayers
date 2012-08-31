@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import org.vaadin.vol.client.Costants;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.server.PaintException;
+import com.vaadin.server.PaintTarget;
 
 /**
  * StyleMaps are collections of Styles (aka renderer intents). Styles are mapped

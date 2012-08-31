@@ -5,9 +5,9 @@ import org.vaadin.vol.client.wrappers.layer.Layer;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.VConsole;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.VConsole;
 
 public abstract class VAbstracMapLayer<T extends Layer> extends Widget
         implements VLayer {

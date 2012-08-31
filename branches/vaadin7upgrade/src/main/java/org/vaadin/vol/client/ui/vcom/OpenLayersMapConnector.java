@@ -4,12 +4,12 @@ import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.client.ui.VOpenLayersMap;
 
 import com.google.gwt.core.shared.GWT;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.ui.AbstractComponentContainerConnector;
 import com.vaadin.shared.ui.Connect;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.ComponentConnector;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.ui.AbstractComponentContainerConnector;
 
 @Connect(OpenLayersMap.class)
 public class OpenLayersMapConnector extends AbstractComponentContainerConnector implements Paintable {
@@ -32,6 +32,7 @@ public class OpenLayersMapConnector extends AbstractComponentContainerConnector 
 
     @Override
     public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+        getWidget().setImmediate(getState().isImmediate());
         getWidget().updateFromUIDL(uidl, client);
     }
 

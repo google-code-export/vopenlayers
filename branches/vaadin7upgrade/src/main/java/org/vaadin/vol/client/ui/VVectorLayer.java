@@ -27,13 +27,12 @@ import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.RenderSpace;
-import com.vaadin.terminal.gwt.client.ServerConnector;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.ValueMap;
-import com.vaadin.terminal.gwt.client.ui.Vaadin6Connector;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.RenderSpace;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.ValueMap;
+import com.vaadin.client.ui.Vaadin6Connector;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
 

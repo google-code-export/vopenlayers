@@ -2,8 +2,8 @@ package org.vaadin.vol;
 
 import java.util.Map;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.server.PaintException;
+import com.vaadin.server.PaintTarget;
 
 /**
  * Attibutes class wraps a JavaScript Object

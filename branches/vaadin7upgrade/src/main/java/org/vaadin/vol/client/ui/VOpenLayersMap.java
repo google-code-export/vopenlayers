@@ -24,22 +24,23 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.RenderSpace;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.Util;
+import com.vaadin.client.VConsole;
+import com.vaadin.client.ui.Action;
+import com.vaadin.client.ui.TreeAction;
+
 //import com.vaadin.terminal.gwt.client.Container;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.RenderSpace;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.Util;
-import com.vaadin.terminal.gwt.client.VConsole;
-import com.vaadin.terminal.gwt.client.ui.Action;
-import com.vaadin.terminal.gwt.client.ui.ActionOwner;
-import com.vaadin.terminal.gwt.client.ui.TreeAction;
 
 /**
  * Client side widget which communicates with the server. Messages from the
  * server are shown as HTML and mouse clicks are sent to the server.
  */
-public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner {
+public class VOpenLayersMap extends FlowPanel implements
+        com.vaadin.client.Paintable, com.vaadin.client.ui.ActionOwner {
 
     private Map map = new Map();
 
@@ -101,6 +102,10 @@ public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner 
         }, ContextMenuEvent.getType());
     }
 
+    public void setImmediate(boolean immediate) {
+        this.immediate = immediate;
+    }
+
     protected void handleBodyContextMenu(ContextMenuEvent event) {
         if (bodyActionKeys != null) {
             clickedLonLat = getMap().getLonLatFromPixel(
@@ -153,8 +158,6 @@ public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner 
             return;
         }
 
-        immediate = uidl.hasAttribute("immediate");
-
         if (uidl.hasAttribute("projection")) {
             serverSideProjection = Projection.get(uidl
                     .getStringAttribute("projection"));
@@ -166,6 +169,8 @@ public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner 
 
         if (extentChangeListener == null) {
             extentChangeListener = new GwtOlHandler() {
+                private Bounds previousextent;
+
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
 
@@ -178,14 +183,19 @@ public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner 
                     }
                     Projection projection = map.getProjection();
                     extent.transform(projection, getProjection());
-                    client.updateVariable(paintableId, "left",
-                            extent.getLeft(), false);
-                    client.updateVariable(paintableId, "right",
-                            extent.getRight(), false);
-                    client.updateVariable(paintableId, "top", extent.getTop(),
-                            false);
-                    client.updateVariable(paintableId, "bottom",
-                            extent.getBottom(), immediate);
+                    // FIXME shouldn't be like this, but now send only first
+                    // extent due to major Vaadin 7 issue
+                    if (previousextent == null) {
+                        client.updateVariable(paintableId, "left",
+                                extent.getLeft(), false);
+                        client.updateVariable(paintableId, "right",
+                                extent.getRight(), false);
+                        client.updateVariable(paintableId, "top",
+                                extent.getTop(), false);
+                        client.updateVariable(paintableId, "bottom",
+                                extent.getBottom(), immediate);
+                        previousextent = extent;
+                    }
                 }
             };
             getMap().registerEventHandler("moveend", extentChangeListener);
@@ -259,14 +269,15 @@ public class VOpenLayersMap extends FlowPanel implements Paintable, ActionOwner 
 
             }
         }
-        // Defer as paints are not hierachical in Vaadin 7, depends on baselayer that is not necessary set yet
+        // Defer as paints are not hierachical in Vaadin 7, depends on baselayer
+        // that is not necessary set yet
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
             @Override
             public void execute() {
-                
+
                 map.updateSize();
-                
+
                 if (uidl.hasAttribute("re_top")) {
                     Bounds bounds = Bounds.create(
                             uidl.getDoubleAttribute("re_left"),

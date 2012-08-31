@@ -4,12 +4,12 @@ import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.client.ui.VVectorLayer;
 
 import com.google.gwt.core.shared.GWT;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.ui.AbstractComponentContainerConnector;
 import com.vaadin.shared.ui.Connect;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.ComponentConnector;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.ui.AbstractComponentContainerConnector;
 
 @Connect(VectorLayer.class)
 public class VectorLayerConnector extends AbstractComponentContainerConnector implements Paintable {

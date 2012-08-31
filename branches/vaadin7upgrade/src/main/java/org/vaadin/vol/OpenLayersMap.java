@@ -14,11 +14,13 @@ import java.util.StringTokenizer;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.event.Action;
-import com.vaadin.terminal.KeyMapper;
-import com.vaadin.terminal.LegacyPaint;
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.terminal.Vaadin6Component;
+import com.vaadin.external.json.JSONException;
+import com.vaadin.external.json.JSONObject;
+import com.vaadin.server.KeyMapper;
+import com.vaadin.server.LegacyComponent;
+import com.vaadin.server.LegacyPaint;
+import com.vaadin.server.PaintException;
+import com.vaadin.server.PaintTarget;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
@@ -31,7 +33,7 @@ import com.vaadin.ui.Component;
 // FIXME adding script should be controllable programmatically !!!
 @JavaScript("public/helpers.js")
 public class OpenLayersMap extends AbstractComponentContainer implements
-        Action.Container, Vaadin6Component {
+        Action.Container, LegacyComponent {
 
     private final Set<Action.Handler> actionHandlers = new LinkedHashSet<Action.Handler>();
     private final KeyMapper actionMapper = new KeyMapper();
@@ -148,6 +150,8 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     private Bounds zoomToExtent;
     private Bounds restrictedExtend;
     private String projection;
+    private boolean ignoreRepaints;
+    private boolean isPainted;
 
     private void setDirty(String fieldName) {
         if (!fullRepaint) {
@@ -208,6 +212,13 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
         clearPartialPaintFlags();
         fullRepaint = false;
+        isPainted = true;
+    }
+    
+    @Override
+    public void beforeClientResponse(boolean initial) {
+        isPainted = initial;
+        super.beforeClientResponse(initial);
     }
 
     /**
@@ -298,7 +309,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     @Override
     public void requestRepaint() {
-        if (!partialRepaint) {
+        if (isPainted && !partialRepaint) {
             clearPartialPaintFlags();
             fullRepaint = true;
         }
@@ -583,10 +594,26 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     public void removeListener(ExtentChangeListener listener) {
         removeListener(ExtentChangeEvent.class, listener);
     }
+    
+//    @Override
+//    public boolean isVisible() {
+//        ignoreRepaints = isPainted;
+//        boolean visible = super.isVisible();
+//        ignoreRepaints = false;
+//        return ignoreRepaints;
+//       
+//    }
+//    
+//    @Override
+//    public JSONObject encodeState() throws JSONException {
+//        ignoreRepaints = isPainted;
+//        JSONObject encodeState = super.encodeState();
+//        ignoreRepaints = false;
+//        return encodeState;
+//    }
 
     @Override
     public int getComponentCount() {
-        // FIXME
         return layers.size();
     }
 

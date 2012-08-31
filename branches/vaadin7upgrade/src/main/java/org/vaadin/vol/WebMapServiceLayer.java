@@ -3,8 +3,8 @@
  */
 package org.vaadin.vol;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.server.PaintException;
+import com.vaadin.server.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
 
 //@ClientWidget(VWebMapServiceLayer.class)

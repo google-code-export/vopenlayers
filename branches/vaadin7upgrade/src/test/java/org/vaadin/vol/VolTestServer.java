@@ -9,7 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.vaadin.vol.demo.VolApplication;
 
-import com.vaadin.terminal.gwt.server.ApplicationServlet;
+import com.vaadin.server.ApplicationServlet;
 
 public class VolTestServer {
 
