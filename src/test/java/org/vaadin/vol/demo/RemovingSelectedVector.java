@@ -4,6 +4,8 @@ import java.util.Iterator;
 
 import org.vaadin.vol.Bounds;
 import org.vaadin.vol.OpenLayersMap;
+import org.vaadin.vol.OpenLayersMap.ExtentChangeEvent;
+import org.vaadin.vol.OpenLayersMap.ExtentChangeListener;
 import org.vaadin.vol.OpenStreetMapLayer;
 import org.vaadin.vol.Point;
 import org.vaadin.vol.PointVector;
@@ -19,6 +21,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 
 /**
  * Example where one can drag points or squares with context menu.
@@ -32,6 +35,14 @@ public class RemovingSelectedVector extends AbstractVOLTest implements Handler, 
     private Button removeAll = new Button("Remove all but selected", this);
 
     private void addBaseLayer(OpenLayersMap openLayersMap) {
+        openLayersMap.setImmediate(true);
+        openLayersMap.addListener(new ExtentChangeListener() {
+            
+            @Override
+            public void extentChanged(ExtentChangeEvent event) {
+                Notification.show("Extent now " + event.getComponent().getExtend());
+            }
+        });
         openLayersMap.addLayer(new OpenStreetMapLayer());
 
         vectorLayer = new VectorLayer();

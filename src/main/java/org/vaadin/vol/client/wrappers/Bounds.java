@@ -35,4 +35,8 @@ public class Bounds extends JavaScriptObject {
 		return this.right;
 	}-*/;
 
+	public native final boolean equals(Bounds other) 
+	/*-{
+            return this.left == other.left && this.right == other.right && this.top == other.top && this.bottom == other.bottom;
+	}-*/;
 }

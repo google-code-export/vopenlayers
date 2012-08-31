@@ -13,7 +13,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
-import com.vaadin.terminal.gwt.client.VConsole;
+import com.vaadin.client.VConsole;
 
 /**
  * A widget that contains open layers map. Proxys all relevant OpenLayers map

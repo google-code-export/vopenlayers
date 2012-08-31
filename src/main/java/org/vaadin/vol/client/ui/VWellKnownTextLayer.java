@@ -6,8 +6,8 @@ import org.vaadin.vol.client.wrappers.format.WKT;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
 
 public class VWellKnownTextLayer extends
         VAbstractAutopopulatedVectorLayer<VectorLayer> {

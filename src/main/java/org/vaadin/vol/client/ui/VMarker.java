@@ -1,11 +1,5 @@
 package org.vaadin.vol.client.ui;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
-
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.Icon;
 import org.vaadin.vol.client.wrappers.LonLat;
@@ -14,6 +8,12 @@ import org.vaadin.vol.client.wrappers.Marker;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Size;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
+
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
 
 public class VMarker extends Widget implements VMarkable {
 

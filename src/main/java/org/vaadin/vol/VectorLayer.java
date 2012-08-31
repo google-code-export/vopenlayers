@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.vaadin.terminal.LegacyPaint;
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.terminal.Vaadin6Component;
+import com.vaadin.server.LegacyComponent;
+import com.vaadin.server.LegacyPaint;
+import com.vaadin.server.PaintException;
+import com.vaadin.server.PaintTarget;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 
 //@ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
-public class VectorLayer extends AbstractComponentContainer implements Layer, Vaadin6Component {
+public class VectorLayer extends AbstractComponentContainer implements Layer, LegacyComponent {
 
     private StyleMap stylemap;
 

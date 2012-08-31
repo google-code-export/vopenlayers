@@ -5,9 +5,9 @@ import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.geometry.Point;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.ValueMap;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.ValueMap;
 
 public class VPointVector extends VAbstractVector {
 

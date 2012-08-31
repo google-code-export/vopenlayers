@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.vaadin.vol.VectorLayer.SelectionMode;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
 import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;

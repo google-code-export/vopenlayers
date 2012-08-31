@@ -1,19 +1,19 @@
 package org.vaadin.vol.client.ui;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-//import com.vaadin.terminal.gwt.client.Container;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.RenderSpace;
-import com.vaadin.terminal.gwt.client.UIDL;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
+
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.RenderSpace;
+import com.vaadin.client.UIDL;
+//import com.vaadin.terminal.gwt.client.Container;
 
 public class VMarkerLayer extends FlowPanel implements VLayer
 //, Container
