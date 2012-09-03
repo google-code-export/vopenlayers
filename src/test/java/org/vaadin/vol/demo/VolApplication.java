@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.jsoup.nodes.Element;
 
 import com.vaadin.Application;
-import com.vaadin.UIRequiresMoreInformationException;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -14,6 +13,7 @@ import com.vaadin.server.BootstrapFragmentResponse;
 import com.vaadin.server.BootstrapListener;
 import com.vaadin.server.BootstrapPageResponse;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.UIProvider;
 import com.vaadin.server.WrappedRequest;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
@@ -28,6 +28,54 @@ public class VolApplication extends Application {
     private Container testClassess;
 
     public VolApplication() {
+        
+        addUIProvider(new UIProvider() {
+            
+            @Override
+            public UI instantiateUI(Application application, Class<? extends UI> type,
+                    WrappedRequest request) {
+                UI root = new UI() {
+
+                    @Override
+                    protected void init(WrappedRequest request) {
+                        String name = request.getRequestPathInfo().substring(1);
+                        try {
+
+                            String className = getClass().getPackage().getName() + "."
+                                    + name;
+                            Class<?> forName = Class.forName(className);
+                            if (forName != null) {
+                                AbstractVOLTest newInstance = (AbstractVOLTest) forName
+                                        .newInstance();
+                                setContent(newInstance);
+                                return;
+                            }
+                        } catch (ClassNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (InstantiationException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        CssLayout cssLayout = new CssLayout();
+                        loadTestClasses(cssLayout);
+                        setContent(cssLayout);
+                    }
+                };
+                return root;
+            }
+            
+            @Override
+            public Class<? extends UI> getUIClass(Application application,
+                    WrappedRequest request) {
+                return UI.class;
+            }
+        });
+        
         addBootstrapListener(new BootstrapListener() {
 
             @Override
@@ -144,44 +192,6 @@ public class VolApplication extends Application {
             item.getItemProperty("Suitble as online demo").setValue(
                     newInstance.isSuitebleOnlineDemo());
         }
-    }
-
-    @Override
-    protected UI getUI(WrappedRequest request)
-            throws UIRequiresMoreInformationException {
-        UI root = new UI() {
-
-            @Override
-            protected void init(WrappedRequest request) {
-                String name = request.getRequestPathInfo().substring(1);
-                try {
-
-                    String className = getClass().getPackage().getName() + "."
-                            + name;
-                    Class<?> forName = Class.forName(className);
-                    if (forName != null) {
-                        AbstractVOLTest newInstance = (AbstractVOLTest) forName
-                                .newInstance();
-                        setContent(newInstance);
-                        return;
-                    }
-                } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                CssLayout cssLayout = new CssLayout();
-                loadTestClasses(cssLayout);
-                setContent(cssLayout);
-            }
-        };
-        return root;
     }
 
 }
