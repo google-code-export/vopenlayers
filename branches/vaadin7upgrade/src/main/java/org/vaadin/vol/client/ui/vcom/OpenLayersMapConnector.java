@@ -32,7 +32,7 @@ public class OpenLayersMapConnector extends AbstractComponentContainerConnector 
 
     @Override
     public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
-        getWidget().setImmediate(getState().isImmediate());
+        getWidget().setImmediate(getState().immediate);
         getWidget().updateFromUIDL(uidl, client);
     }
 
