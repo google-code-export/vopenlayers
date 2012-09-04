@@ -32,7 +32,13 @@ public class VolApplication extends Application {
         addUIProvider(new UIProvider() {
             
             @Override
-            public UI instantiateUI(Application application, Class<? extends UI> type,
+            public Class<? extends UI> getUIClass(Application application,
+                    WrappedRequest request) {
+                return UI.class;
+            }
+            
+            @Override
+            public UI createInstance(Application application, Class<? extends UI> type,
                     WrappedRequest request) {
                 UI root = new UI() {
 
@@ -66,16 +72,9 @@ public class VolApplication extends Application {
                         setContent(cssLayout);
                     }
                 };
-                return root;
-            }
-            
-            @Override
-            public Class<? extends UI> getUIClass(Application application,
-                    WrappedRequest request) {
-                return UI.class;
-            }
+                return root;            }
         });
-        
+                
         addBootstrapListener(new BootstrapListener() {
 
             @Override
