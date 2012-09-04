@@ -9,7 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.vaadin.vol.demo.VolApplication;
 
-import com.vaadin.server.ApplicationServlet;
+import com.vaadin.server.VaadinServlet;
 
 public class VolTestServer {
 
@@ -33,7 +33,7 @@ public class VolTestServer {
 
         WebAppContext context = new WebAppContext();
         ServletHolder servletHolder = new ServletHolder(
-                ApplicationServlet.class);
+                VaadinServlet.class);
         servletHolder.setInitParameter("widgetset",
                 "org.vaadin.vol.demo.VolExampleAppWidgetset");
         servletHolder.setInitParameter("application",
