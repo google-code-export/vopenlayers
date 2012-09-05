@@ -14,9 +14,9 @@ import com.vaadin.server.LegacyComponent;
 import com.vaadin.server.LegacyPaint;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
-import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
 //@ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
 public class VectorLayer extends AbstractComponentContainer implements Layer, LegacyComponent {
