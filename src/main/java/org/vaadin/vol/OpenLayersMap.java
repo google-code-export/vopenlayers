@@ -14,16 +14,14 @@ import java.util.StringTokenizer;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.event.Action;
-import com.vaadin.external.json.JSONException;
-import com.vaadin.external.json.JSONObject;
 import com.vaadin.server.KeyMapper;
 import com.vaadin.server.LegacyComponent;
 import com.vaadin.server.LegacyPaint;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
-import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
 /**
  * Server side component for the VOpenLayersMap widget.

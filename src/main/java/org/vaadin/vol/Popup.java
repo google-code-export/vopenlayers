@@ -9,11 +9,11 @@ import java.util.Iterator;
 
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
-import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import com.vaadin.util.ReflectTools;
 
 @SuppressWarnings("serial")
 //@ClientWidget(VPopup.class)

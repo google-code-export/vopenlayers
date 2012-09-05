@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.vaadin.vol.VectorLayer.SelectionMode;
 
-import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
 /**
  * An abstract implementation (based on client side vector layer) that populates
