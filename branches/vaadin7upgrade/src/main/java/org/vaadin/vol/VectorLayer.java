@@ -19,7 +19,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.util.ReflectTools;
 
 //@ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
-public class VectorLayer extends AbstractComponentContainer implements Layer, LegacyComponent {
+public class VectorLayer extends AbstractComponentContainer implements Layer,
+        LegacyComponent {
 
     private StyleMap stylemap;
 
@@ -79,6 +80,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer, Le
         if (c instanceof Vector) {
             vectors.add((Vector) c);
             super.addComponent(c);
+            requestRepaint();
         } else {
             throw new IllegalArgumentException(
                     "VectorLayer supports only Vectors");
@@ -107,7 +109,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer, Le
 
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
-//        super.changeVariables(source, variables);
+        // super.changeVariables(source, variables);
         // support other drawing modes than area
         // TODO make events fired when new object is drawn/edited
         if (variables.containsKey("vertices")) {
@@ -385,8 +387,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer, Le
 
     @Override
     public int getComponentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return vectors.size();
     }
 
 }
