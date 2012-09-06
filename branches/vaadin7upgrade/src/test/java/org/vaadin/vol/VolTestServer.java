@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.vaadin.vol.demo.VolApplication;
+import org.vaadin.vol.demo.VolUI;
 
 import com.vaadin.server.VaadinServlet;
 
@@ -32,17 +32,15 @@ public class VolTestServer {
         server.setConnectors(new Connector[] { connector });
 
         WebAppContext context = new WebAppContext();
-        ServletHolder servletHolder = new ServletHolder(
-                VaadinServlet.class);
+        ServletHolder servletHolder = new ServletHolder(VaadinServlet.class);
         servletHolder.setInitParameter("widgetset",
                 "org.vaadin.vol.demo.VolExampleAppWidgetset");
-        servletHolder.setInitParameter("application",
-                VolApplication.class.getName());
+        servletHolder.setInitParameter("UI", VolUI.class.getName());
 
         File file = new File("./target/testwebapp");
         context.setWar(file.getPath());
         context.setContextPath("/");
-        
+
         ServletHolder servletHolder2 = new ServletHolder(WFSProxyServlet.class);
         context.addServlet(servletHolder2, "/WFSPROXY/*");
         context.addServlet(servletHolder, "/*");

@@ -47,7 +47,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
 
 public class Demo extends AbstractVOLTest {
     private HorizontalLayout controls;
@@ -60,7 +59,7 @@ public class Demo extends AbstractVOLTest {
     @Override
     protected void setup() {
         super.setup();
-        ((VerticalLayout) getContent()).addComponentAsFirst(controls);
+        (getContent()).addComponentAsFirst(controls);
     }
 
     @Override
@@ -137,7 +136,7 @@ public class Demo extends AbstractVOLTest {
             public void vectorSelected(VectorSelectedEvent event) {
                 Vector vector = event.getVector();
                 Notification.show("Selected vector with points "
-                                + Arrays.deepToString(vector.getPoints()));
+                        + Arrays.deepToString(vector.getPoints()));
             }
         });
 
@@ -200,12 +199,12 @@ public class Demo extends AbstractVOLTest {
         stylemap.setStyle(new RenderIntent("red"), style);
         Style markerStyle = new Style();
         markerStyle
-                .setExternalGraphic(getApplication().getURL()
+                .setExternalGraphic(getUI().getSession().getURL()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
         markerStyle.setGraphicZIndex(11);
         markerStyle.setGraphicSize(16, 21);
         markerStyle
-                .setBackgroundGraphic(getApplication().getURL()
+                .setBackgroundGraphic(getUI().getSession().getURL()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
         markerStyle.setBackgroundYOffset(-7);
         markerStyle.setBackgroundXOffset(0);
@@ -280,7 +279,8 @@ public class Demo extends AbstractVOLTest {
                         || mode == DrawingMode.NONE) {
                     vectorLayer.setDrawindMode(mode);
                 } else {
-                    Notification.show("Sorry, feature is on TODO list. Try area.");
+                    Notification
+                            .show("Sorry, feature is on TODO list. Try area.");
                 }
             }
         });
