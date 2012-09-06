@@ -46,7 +46,7 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         });
 
         // proxied to http://demo.opengeo.org/geoserver/wfs
-        webFeatureServiceLayer.setUri(getApplication().getURL()
+        webFeatureServiceLayer.setUri(getUI().getSession().getURL()
                 + "../WFSPROXY/");
         webFeatureServiceLayer.setFeatureType("states");
         webFeatureServiceLayer.setFeatureNS("http://www.openplans.org/topp");

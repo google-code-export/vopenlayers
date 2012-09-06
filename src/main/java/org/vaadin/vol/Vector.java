@@ -7,7 +7,8 @@ import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
 
-public abstract class Vector extends AbstractComponent implements LegacyComponent {
+public abstract class Vector extends AbstractComponent implements
+        LegacyComponent {
 
     private String projection;
 
@@ -21,7 +22,7 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
         setPointsWithoutRepaint(points);
         requestRepaint();
     }
-    
+
     protected void setPointsWithoutRepaint(Point... points) {
         this.points = points;
     }
@@ -35,7 +36,7 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
     }
 
     public String getProjection() {
-        if(projection == null && getApplication() != null) {
+        if (projection == null && getUI() != null) {
             OpenLayersMap parent2 = (OpenLayersMap) getParent().getParent();
             return parent2.getApiProjection();
         }
@@ -48,7 +49,7 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
     public Style getCustomStyle() {
         return style;
     }
-    
+
     /**
      * @param style
      *            the custom style declaration to be used for rendering this
@@ -61,9 +62,9 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
 
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
-//        super.paintContent(target);
+        // super.paintContent(target);
         target.addAttribute("points", getPoints());
-        if(getProjection() != null) {
+        if (getProjection() != null) {
             target.addAttribute("projection", getProjection());
         }
         if (style != null) {
@@ -73,19 +74,19 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
             vectAttributes.paint("olVectAttributes", target);
         }
     }
-    
+
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void select() {
-        if(getParent() != null) {
+        if (getParent() != null) {
             ((VectorLayer) getParent()).setSelectedVector(this);
         }
     }
-    
+
     /**
      * Vectors styleName does not modify CSS style name as the method does for
      * standard Components. Instead the style name defines rendered intent that
@@ -125,7 +126,7 @@ public abstract class Vector extends AbstractComponent implements LegacyComponen
      *            the vectAttributes to set
      */
     public void setAttributes(Attributes attributes) {
-        this.vectAttributes = attributes;
+        vectAttributes = attributes;
     }
 
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.jsoup.nodes.Element;
 
-import com.vaadin.Application;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -13,7 +12,6 @@ import com.vaadin.server.BootstrapFragmentResponse;
 import com.vaadin.server.BootstrapListener;
 import com.vaadin.server.BootstrapPageResponse;
 import com.vaadin.server.ExternalResource;
-import com.vaadin.server.UIProvider;
 import com.vaadin.server.WrappedRequest;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
@@ -23,72 +21,56 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
 
-public class VolApplication extends Application {
+public class VolUI extends UI {
 
     private Container testClassess;
 
-    public VolApplication() {
-        
-        addUIProvider(new UIProvider() {
-            
-            @Override
-            public Class<? extends UI> getUIClass(Application application,
-                    WrappedRequest request) {
-                return UI.class;
+    public VolUI() {
+    }
+
+    @Override
+    protected void init(WrappedRequest request) {
+        String name = request.getRequestPathInfo().substring(1);
+        try {
+
+            String className = getClass().getPackage().getName() + "." + name;
+            Class<?> forName = Class.forName(className);
+            if (forName != null) {
+                AbstractVOLTest newInstance = (AbstractVOLTest) forName
+                        .newInstance();
+                setContent(newInstance);
+                return;
             }
-            
-            @Override
-            public UI createInstance(Application application, Class<? extends UI> type,
-                    WrappedRequest request) {
-                UI root = new UI() {
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-                    @Override
-                    protected void init(WrappedRequest request) {
-                        String name = request.getRequestPathInfo().substring(1);
-                        try {
+        CssLayout cssLayout = new CssLayout();
+        loadTestClasses(cssLayout);
+        setContent(cssLayout);
 
-                            String className = getClass().getPackage().getName() + "."
-                                    + name;
-                            Class<?> forName = Class.forName(className);
-                            if (forName != null) {
-                                AbstractVOLTest newInstance = (AbstractVOLTest) forName
-                                        .newInstance();
-                                setContent(newInstance);
-                                return;
-                            }
-                        } catch (ClassNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (InstantiationException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        CssLayout cssLayout = new CssLayout();
-                        loadTestClasses(cssLayout);
-                        setContent(cssLayout);
-                    }
-                };
-                return root;            }
-        });
-                
-        addBootstrapListener(new BootstrapListener() {
+        getSession().addBootstrapListener(new BootstrapListener() {
 
             @Override
             public void modifyBootstrapPage(BootstrapPageResponse response) {
-                Element h = response.getDocument().getElementsByTag("head").get(0);
+                Element h = response.getDocument().getElementsByTag("head")
+                        .get(0);
 
                 Element s = response.getDocument().createElement("script");
                 s.attr("src", "http://openlayers.org/api/OpenLayers.js");
                 h.appendChild(s);
-                
+
                 s = response.getDocument().createElement("script");
-                s.attr("src", "http://maps.google.com/maps/api/js?v=3.2&sensor=false");
+                s.attr("src",
+                        "http://maps.google.com/maps/api/js?v=3.2&sensor=false");
                 h.appendChild(s);
-                
 
             }
 
@@ -118,8 +100,8 @@ public class VolApplication extends Application {
                     Object columnId) {
                 String name = (String) source.getItem(itemId)
                         .getItemProperty(columnId).getValue();
-                Link link = new Link(name,
-                        new ExternalResource(getURL() + name));
+                Link link = new Link(name, new ExternalResource(getSession()
+                        .getURL() + name));
                 link.setTargetName("_new");
                 return link;
             }
@@ -192,5 +174,4 @@ public class VolApplication extends Application {
                     newInstance.isSuitebleOnlineDemo());
         }
     }
-
 }

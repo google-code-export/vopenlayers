@@ -227,12 +227,12 @@ public class VectorAnimation extends AbstractVOLTest implements ClickListener {
                         % coordinateList.length];
                 points[4] = back;
 
-                synchronized (getApplication()) {
+                synchronized (getUI()) {
                     polyline.setPoints(points);
                 }
             }
 
-            synchronized (getApplication()) {
+            synchronized (getUI()) {
                 pi.setVisible(false);
                 showWholeVector();
             }
