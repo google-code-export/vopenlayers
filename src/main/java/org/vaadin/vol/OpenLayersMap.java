@@ -304,14 +304,14 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     public void addPopup(Popup popup) {
         addComponent(popup);
     }
-
+    
     @Override
-    public void requestRepaint() {
+    public void markAsDirty() {
         if (isPainted && !partialRepaint) {
             clearPartialPaintFlags();
             fullRepaint = true;
         }
-        super.requestRepaint();
+        super.markAsDirty();
     }
 
     private void partialPaint() {
