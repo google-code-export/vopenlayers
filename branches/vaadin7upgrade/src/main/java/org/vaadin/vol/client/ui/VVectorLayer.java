@@ -32,7 +32,7 @@ import com.vaadin.client.Paintable;
 import com.vaadin.client.RenderSpace;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.ValueMap;
-import com.vaadin.client.ui.Vaadin6Connector;
+import com.vaadin.client.ui.LegacyConnector;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
 
@@ -307,7 +307,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
         }
         if (currentSelectionMode != "NONE" || drawingMode == "MODIFY") {
             if (layer.hasAttribute("svector")) {
-                VAbstractVector selectedVector = (VAbstractVector) ((Vaadin6Connector)layer
+                VAbstractVector selectedVector = (VAbstractVector) ((LegacyConnector)layer
                         .getPaintableAttribute("svector", client)).getWidget();
                 if (selectedVector != null) {
                     // ensure selection

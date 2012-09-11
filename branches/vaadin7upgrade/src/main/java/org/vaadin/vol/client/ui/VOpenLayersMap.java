@@ -58,8 +58,6 @@ public class VOpenLayersMap extends FlowPanel implements
     /** Reference to the server connection object. */
     protected ApplicationConnection client;
 
-    // private MarkerLayer markerLayer;
-
     HashMap<String, Widget> components = new HashMap<String, Widget>();
 
     FlowPanel fakePaintables = new FlowPanel();
@@ -169,11 +167,9 @@ public class VOpenLayersMap extends FlowPanel implements
 
         if (extentChangeListener == null) {
             extentChangeListener = new GwtOlHandler() {
-                private Bounds previousextent;
-
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-
+                    
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);
                     Bounds extent = map.getExtent();
@@ -183,19 +179,16 @@ public class VOpenLayersMap extends FlowPanel implements
                     }
                     Projection projection = map.getProjection();
                     extent.transform(projection, getProjection());
-                    // FIXME shouldn't be like this, but now send only first
-                    // extent due to major Vaadin 7 issue
-                    if (previousextent == null) {
-                        client.updateVariable(paintableId, "left",
-                                extent.getLeft(), false);
-                        client.updateVariable(paintableId, "right",
-                                extent.getRight(), false);
-                        client.updateVariable(paintableId, "top",
-                                extent.getTop(), false);
-                        client.updateVariable(paintableId, "bottom",
-                                extent.getBottom(), immediate);
-                        previousextent = extent;
-                    }
+                    client.updateVariable(paintableId, "left",
+                            extent.getLeft(), false);
+                    client.updateVariable(paintableId, "right",
+                            extent.getRight(), false);
+                    client.updateVariable(paintableId, "top", extent.getTop(),
+                            false);
+                    
+                    // FIXME
+                    client.updateVariable(paintableId, "bottom",
+                            extent.getBottom(), false);
                 }
             };
             getMap().registerEventHandler("moveend", extentChangeListener);
