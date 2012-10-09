@@ -100,8 +100,7 @@ public class VolUI extends UI {
                     Object columnId) {
                 String name = (String) source.getItem(itemId)
                         .getItemProperty(columnId).getValue();
-                Link link = new Link(name, new ExternalResource(getSession()
-                        .getURL() + name));
+                Link link = new Link(name, new ExternalResource(getUI().getPage().getLocation() + name));
                 link.setTargetName("_new");
                 return link;
             }
