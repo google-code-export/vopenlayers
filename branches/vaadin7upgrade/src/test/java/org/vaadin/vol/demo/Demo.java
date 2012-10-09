@@ -199,12 +199,12 @@ public class Demo extends AbstractVOLTest {
         stylemap.setStyle(new RenderIntent("red"), style);
         Style markerStyle = new Style();
         markerStyle
-                .setExternalGraphic(getUI().getSession().getURL()
+                .setExternalGraphic(getUI().getPage().getLocation()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker.png");
         markerStyle.setGraphicZIndex(11);
         markerStyle.setGraphicSize(16, 21);
         markerStyle
-                .setBackgroundGraphic(getUI().getSession().getURL()
+                .setBackgroundGraphic(getUI().getPage().getLocation()
                         + "../VAADIN/widgetsets/org.vaadin.vol.demo.VolExampleAppWidgetset/img/marker_shadow.png");
         markerStyle.setBackgroundYOffset(-7);
         markerStyle.setBackgroundXOffset(0);
