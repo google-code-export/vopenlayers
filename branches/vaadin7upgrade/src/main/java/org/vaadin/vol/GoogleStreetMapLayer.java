@@ -5,10 +5,10 @@ package org.vaadin.vol;
 
 import java.util.Map;
 
-import com.vaadin.server.LegacyComponent;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.LegacyComponent;
 
 /**
  * Google street layer that can be added to {@link OpenLayersMap}.

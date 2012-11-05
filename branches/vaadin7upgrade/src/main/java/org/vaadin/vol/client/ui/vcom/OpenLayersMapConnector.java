@@ -6,6 +6,7 @@ import org.vaadin.vol.client.ui.VOpenLayersMap;
 import com.google.gwt.core.shared.GWT;
 import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.Paintable;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
@@ -34,6 +35,13 @@ public class OpenLayersMapConnector extends AbstractComponentContainerConnector 
     public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
         getWidget().setImmediate(getState().immediate);
         getWidget().updateFromUIDL(uidl, client);
+    }
+
+    @Override
+    public void onConnectorHierarchyChange(
+            ConnectorHierarchyChangeEvent connectorHierarchyChangeEvent) {
+        // TODO Auto-generated method stub
+        
     }
 
 //    @Override

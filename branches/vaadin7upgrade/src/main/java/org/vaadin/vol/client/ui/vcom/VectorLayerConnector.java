@@ -6,6 +6,7 @@ import org.vaadin.vol.client.ui.VVectorLayer;
 import com.google.gwt.core.shared.GWT;
 import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.Paintable;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
@@ -39,6 +40,13 @@ public class VectorLayerConnector extends AbstractComponentContainerConnector im
     @Override
     public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
         getWidget().updateFromUIDL(uidl, client);
+    }
+
+    @Override
+    public void onConnectorHierarchyChange(
+            ConnectorHierarchyChangeEvent connectorHierarchyChangeEvent) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
