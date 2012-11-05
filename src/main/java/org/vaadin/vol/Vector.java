@@ -2,10 +2,10 @@ package org.vaadin.vol;
 
 import java.util.Map;
 
-import com.vaadin.server.LegacyComponent;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.LegacyComponent;
 
 public abstract class Vector extends AbstractComponent implements
         LegacyComponent {

@@ -132,7 +132,7 @@ public class VectorAnimation extends AbstractVOLTest implements ClickListener {
 
             controls = new HorizontalLayout();
 
-            animationDuration.setValue(15);
+            animationDuration.setValue(""+15);
             controls.addComponent(animationDuration);
             controls.addComponent(playData);
             controls.addComponent(stop);
