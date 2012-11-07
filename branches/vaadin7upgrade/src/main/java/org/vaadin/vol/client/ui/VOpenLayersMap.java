@@ -186,8 +186,9 @@ public class VOpenLayersMap extends FlowPanel implements
                     client.updateVariable(paintableId, "top", extent.getTop(),
                             false);
                     
+                    // FIXME change to true when V7 works
                     client.updateVariable(paintableId, "bottom",
-                            extent.getBottom(), true);
+                            extent.getBottom(), false);
                 }
             };
             getMap().registerEventHandler("moveend", extentChangeListener);

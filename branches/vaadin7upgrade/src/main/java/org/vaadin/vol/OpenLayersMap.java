@@ -615,4 +615,9 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         return layers.size();
     }
 
+    @Override
+    public Iterator<Component> iterator() {
+        return getComponentIterator();
+    }
+
 }

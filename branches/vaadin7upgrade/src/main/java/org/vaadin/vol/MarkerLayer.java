@@ -70,7 +70,11 @@ public class MarkerLayer extends AbstractComponentContainer implements Layer {
 
     @Override
     public int getComponentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return markers.size();
+    }
+
+    @Override
+    public Iterator<Component> iterator() {
+        return getComponentIterator();
     }
 }
