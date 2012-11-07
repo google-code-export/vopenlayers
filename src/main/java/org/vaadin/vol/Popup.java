@@ -200,7 +200,11 @@ public class Popup extends AbstractComponentContainer {
 
     @Override
     public int getComponentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public Iterator<Component> iterator() {
+        return getComponentIterator();
     }
 }

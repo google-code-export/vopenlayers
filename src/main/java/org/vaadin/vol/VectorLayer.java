@@ -390,4 +390,9 @@ public class VectorLayer extends AbstractComponentContainer implements Layer,
         return vectors.size();
     }
 
+    @Override
+    public Iterator<Component> iterator() {
+        return getComponentIterator();
+    }
+
 }
