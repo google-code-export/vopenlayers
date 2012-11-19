@@ -323,7 +323,8 @@ public class Demo extends AbstractVOLTest {
             }
         });
 
-        Panel panel = new Panel(new CssLayout());
+        CssLayout lo = new CssLayout();
+        Panel panel = new Panel(lo);
         OptionGroup mapcontrols = new OptionGroup();
         mapcontrols.setMultiSelect(true);
         mapcontrols.setImmediate(true);
@@ -350,10 +351,9 @@ public class Demo extends AbstractVOLTest {
         });
         panel.setHeight("100px");
         panel.setWidth("200px");
-        panel.addComponent(mapcontrols);
+        lo.addComponent(mapcontrols);
 
         controls.addComponent(panel);
-
         controls.addComponent(moveToTMSExample);
 
         return map;
