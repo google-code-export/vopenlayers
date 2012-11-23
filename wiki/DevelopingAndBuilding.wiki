@@ -15,6 +15,11 @@ Quick command line how-to for developers:
  * compile test widgetset and java sources: mvn gwt:compile package
  * Run test server: mvn exec:java -Dexec.mainClass="org.vaadin.vol.VolTestServer" -Dexec.classpathScope="test"
 
+
+This command line call build the add on, the demo application and starts the test server:
+mvn clean compile test-compile gwt:compile
+
+
 Using IDE for doing the same thing should work just fine too
 
 Note that Eclipse m2e plugin for some reason adds "excluded: **" for test source directory. Remove that to make eclipse autocompile tests. Starting TestServer is then supa easy with "debug as-> java app"
