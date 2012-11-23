@@ -17,6 +17,7 @@ Quick command line how-to for developers:
 
 
 This command line call build the add on, the demo application and starts the test server:
+
 mvn clean compile test-compile gwt:compile
 
 
