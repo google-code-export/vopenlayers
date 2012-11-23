@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#What's the way to create patches
 
 = Introduction =
 If you are a non member and want contribute something, you need simply start a new issue and attach a patch file with your own changes to it.
