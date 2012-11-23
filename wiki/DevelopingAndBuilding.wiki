@@ -16,9 +16,16 @@ Quick command line how-to for developers:
  * Run test server: mvn exec:java -Dexec.mainClass="org.vaadin.vol.VolTestServer" -Dexec.classpathScope="test"
 
 
-This command line call build the add on, the demo application and starts the test server:
+==A simple start to dive into ...==
+<code language="bash">
+# checkout for non members
+svn checkout http://vopenlayers.googlecode.com/svn/trunk/ vopenlayers-read-only
 
+# complile all and start test server
 mvn clean compile test-compile gwt:compile
+
+# after that you can connect with your browser on localhost:9998
+</code>
 
 
 Using IDE for doing the same thing should work just fine too
