@@ -30,7 +30,7 @@ public class VolUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        String name = request.getRequestPathInfo().substring(1);
+        String name = request.getPathInfo().substring(1);
         try {
 
             String className = getClass().getPackage().getName() + "." + name;
