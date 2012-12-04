@@ -41,6 +41,10 @@ import com.vaadin.client.ui.TreeAction;
  */
 public class VOpenLayersMap extends FlowPanel implements
         com.vaadin.client.Paintable, com.vaadin.client.ui.ActionOwner {
+    
+    static {
+        addHelperFunctions();
+    }
 
     private Map map = new Map();
 
@@ -99,6 +103,19 @@ public class VOpenLayersMap extends FlowPanel implements
             }
         }, ContextMenuEvent.getType());
     }
+
+    private static native void addHelperFunctions() 
+    /*-{
+
+        $wnd.toOlArray = function(a) {
+            var ra = []; 
+            for(var i = 0; i < a.length; i++) { 
+                    ra.push(a[i]);
+            }
+            return ra;
+        };
+
+    }-*/;
 
     public void setImmediate(boolean immediate) {
         this.immediate = immediate;
