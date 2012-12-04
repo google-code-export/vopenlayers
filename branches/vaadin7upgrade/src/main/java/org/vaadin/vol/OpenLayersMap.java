@@ -28,8 +28,8 @@ import com.vaadin.util.ReflectTools;
  *
  */
 @SuppressWarnings("serial")
-// FIXME adding script should be controllable programmatically !!!
-@JavaScript("public/helpers.js")
+// FIXME figure out a way to easily override this script with e.g. hosted or stripped down version
+@JavaScript("OpenLayers.js")
 public class OpenLayersMap extends AbstractComponentContainer implements
         Action.Container, LegacyComponent {
 
