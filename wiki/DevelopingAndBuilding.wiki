@@ -22,7 +22,7 @@ Quick command line how-to for developers:
 svn checkout http://vopenlayers.googlecode.com/svn/trunk/ vopenlayers-read-only
 
 # complile all and start test server
-mvn clean compile test-compile gwt:compile
+mvn clean compile test-compile gwt:compile exec:java
 
 # after that you can connect with your browser on localhost:9998
 </code>
