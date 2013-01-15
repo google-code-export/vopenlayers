@@ -9,6 +9,7 @@ import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.SelectFeatureFactory;
 import org.vaadin.vol.client.wrappers.Style;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
@@ -182,6 +183,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     private boolean added = false;
     private String currentSelectionMode;
     private SelectFeature selectFeature;
+    private String selectionCtrlId;             // Common SelectFeature control identifier
 
     private GwtOlHandler getFeatureAddedListener() {
         if (_fAddedListener == null) {
@@ -260,6 +262,11 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
         updateStyleMap(layer);
         setDrawingMode(layer.getStringAttribute("dmode"));
+        
+        // Identifier for SelectFeature control to use ... layers specifying the
+        // the same identifier can all listen for their own Select events on the map.
+        selectionCtrlId = layer.getStringAttribute("selectionCtrlId");
+        
         setSelectionMode(layer);
 
         HashSet<Widget> orphaned = new HashSet<Widget>();
@@ -289,14 +296,21 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         String newSelectionMode = layer.getStringAttribute("smode").intern();
         if (currentSelectionMode != newSelectionMode) {
             if (selectFeature != null) {
+                /* remove this layer from the SelectFeature instead of removing the control
                 selectFeature.deActivate();
                 getMap().removeControl(selectFeature);
+                */
+                SelectFeatureFactory.getInst().removeLayer(selectFeature, selectionCtrlId, getMap(), vectors);
                 selectFeature = null;
             }
 
             if (newSelectionMode != "NONE") {
+                /* delegate responsibility for managing the SelectFeature to the factory;
+                 * just let it know we want to register this vectorlayer in the SelectFeature.
                 selectFeature = SelectFeature.create(vectors);
                 getMap().addControl(selectFeature);
+                */
+                selectFeature = SelectFeatureFactory.getInst().getOrCreate(selectionCtrlId, getMap(), vectors);
                 selectFeature.activate();
             }
 
@@ -329,7 +343,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 } else {
                     try {
                         selectFeature.unselectAll();
-                       
+                        
                     } catch (Exception e) {
                         // NOP, may throw exception if selected vector gets
                         // deleted

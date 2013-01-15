@@ -40,6 +40,8 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     }
 
     private DrawingMode drawingMode = DrawingMode.NONE;
+    
+    private String selectionCtrlId;             // Common SelectFeature control identifier
 
     public void addVector(Vector m) {
         addComponent(m);
@@ -50,6 +52,11 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         target.addAttribute("name", displayName);
         target.addAttribute("dmode", drawingMode.toString());
         target.addAttribute("smode", selectionMode.toString());
+        
+        if (selectionCtrlId != null) {
+            target.addAttribute("selectionCtrlId", selectionCtrlId);
+        }
+        
         if (selectedVector != null) {
             target.addAttribute("svector", selectedVector);
         }
@@ -235,6 +242,14 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void setStyleMap(StyleMap stylemap) {
         this.stylemap = stylemap;
         requestRepaint();
+    }
+
+    public String getSelectionCtrlId() {
+        return selectionCtrlId;
+    }
+
+    public void setSelectionCtrlId(String selectionCtrlId) {
+        this.selectionCtrlId = selectionCtrlId;
     }
 
     public void setSelectionMode(SelectionMode selectionMode) {
