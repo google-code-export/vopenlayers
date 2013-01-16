@@ -14,7 +14,7 @@ import com.google.gwt.core.client.JsArray;
  * @author eiko
  *
  */
-public class SelectFeatureFactory {
+public final class SelectFeatureFactory {
 	private static SelectFeatureFactory inst=null;
 	private HashMap<String,SelectFeatureContainer> selectFeatureControls=null;	
 	
