@@ -8,7 +8,7 @@ public class GoogleHybridLayer extends Layer {
 	public native final static GoogleHybridLayer create(String displayName, String projection)
 	/*-{
 
-		var options = {type: $wnd.google.maps.MapTypeId.HYBRID, numZoomLevels: 17, sphericalMercator: true};
+		var options = {type: $wnd.google.maps.MapTypeId.HYBRID, numZoomLevels: 22, sphericalMercator: true};
 		if(projection) {
 			options.projection = projection;
 		}
