@@ -69,6 +69,7 @@
 					<draftCompile>true</draftCompile>
 					<style>PRETTY</style>
 					<force>true</force>
+					<strict>true</strict>
 				</configuration>
 			</plugin>
 
