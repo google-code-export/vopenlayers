@@ -2,7 +2,7 @@ package org.vaadin.vol;
 
 import java.util.HashMap;
 
-import org.vaadin.vol.client.Costants;
+import org.vaadin.vol.client.Constants;
 
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
@@ -88,37 +88,37 @@ public class StyleMap {
             }
         }
         if (uniqueValueRules.size() > 0) {
-            target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES, true);
+            target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES, true);
 
             String[] uvrKeysArray = uniqueValueRules.keySet().toArray(
                     new String[uniqueValueRules.size()]);
-            target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS,
+            target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_KEYS,
                     uvrKeysArray);
 
             for (String uvrkey : uvrKeysArray) {
                 UniqueValueRule uvr = uniqueValueRules.get(uvrkey);
 
-                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                         + uvrkey
-                        + Costants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX, uvr
+                        + Constants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX, uvr
                         .getIntent().getValue());
-                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                         + uvrkey
-                        + Costants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX,
+                        + Constants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX,
                         uvr.getProperty());
-                // target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Costants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX,
+                // target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Constants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX,
                 // uvr.getContext());
 
                 String[] lookup_keys = uvr.getLookup().keyArray();
-                target.addAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                target.addAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                         + uvrkey
-                        + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX,
+                        + Constants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX,
                         lookup_keys);
                 for (String key : lookup_keys) {
                     target.addAttribute(
-                            Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                            Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                     + uvrkey
-                                    + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
+                                    + Constants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
                                     + key, ((Symbolizer) uvr.getLookup()
                                     .getProperty(key)).getKeyValueMap());
                 }
