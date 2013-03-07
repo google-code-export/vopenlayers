@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.vaadin.vol.client.Costants;
+import org.vaadin.vol.client.Constants;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.Map;
@@ -413,7 +413,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
             }
         }
 
-        if (childUIDL.hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES)) {
+        if (childUIDL.hasAttribute(Constants.STYLEMAP_UNIQUEVALUERULES)) {
             addUniqueValueRules(sm, childUIDL);
         }
         return sm;
@@ -421,39 +421,39 @@ public class VVectorLayer extends FlowPanel implements VLayer, Paintable {
 
     private static void addUniqueValueRules(StyleMap sm, UIDL childUIDL) {
 
-        if (childUIDL.hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS)) {
+        if (childUIDL.hasAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_KEYS)) {
             String[] uvrKeysArray = childUIDL
-                    .getStringArrayAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_KEYS);
+                    .getStringArrayAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_KEYS);
 
             for (String uvrkey : uvrKeysArray) {
 
                 String property = childUIDL
-                        .getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        .getStringAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                 + uvrkey
-                                + Costants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX);
+                                + Constants.STYLEMAP_UNIQUEVALUERULES_PROPERTY_SUFFIX);
                 String intent = childUIDL
-                        .getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        .getStringAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                 + uvrkey
-                                + Costants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX);
+                                + Constants.STYLEMAP_UNIQUEVALUERULES_INTENT_SUFFIX);
                 // Object context =
-                // childUIDL.getStringAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Costants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX);
+                // childUIDL.getStringAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX+uvrkey+Constants.STYLEMAP_UNIQUEVALUERULES_CONTEXT_SUFFIX);
 
                 if (childUIDL
-                        .hasAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                        .hasAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                 + uvrkey + "_lookupkeys")) {
                     String[] lookup_keys = childUIDL
-                            .getStringArrayAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                            .getStringArrayAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                     + uvrkey
-                                    + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX);
+                                    + Constants.STYLEMAP_UNIQUEVALUERULES_LOOKUPKEYS_SUFFIX);
 
                     JsObject symbolizer_lookup_js = JsObject.createObject();
 
                     for (String key : lookup_keys) {
 
                         ValueMap symbolizer = childUIDL
-                                .getMapAttribute(Costants.STYLEMAP_UNIQUEVALUERULES_PREFIX
+                                .getMapAttribute(Constants.STYLEMAP_UNIQUEVALUERULES_PREFIX
                                         + uvrkey
-                                        + Costants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
+                                        + Constants.STYLEMAP_UNIQUEVALUERULES_LOOKUPITEM_SUFFIX
                                         + key);
                         symbolizer_lookup_js
                                 .setProperty(key, symbolizer.cast());
