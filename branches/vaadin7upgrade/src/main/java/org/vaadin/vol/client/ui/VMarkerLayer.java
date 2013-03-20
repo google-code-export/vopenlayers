@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.vaadin.vol.client.ui.vcom.MarkerConnector;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
 
@@ -13,10 +14,11 @@ import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.Paintable;
 import com.vaadin.client.RenderSpace;
 import com.vaadin.client.UIDL;
+
 //import com.vaadin.terminal.gwt.client.Container;
 
 public class VMarkerLayer extends FlowPanel implements VLayer
-//, Container
+// , Container
 {
 
     private MarkerLayer markers;
@@ -48,8 +50,8 @@ public class VMarkerLayer extends FlowPanel implements VLayer
         int childCount = layer.getChildCount();
         for (int i = 0; i < childCount; i++) {
             UIDL childUIDL = layer.getChildUIDL(i);
-            VMarkable paintable = (VMarkable)client.getPaintable(childUIDL);
-            Widget marker = (Widget)paintable;
+            MarkerConnector paintable = (MarkerConnector) client.getPaintable(childUIDL);
+            VMarker marker = paintable.getWidget();
             boolean isNew = !hasChildComponent(marker);
             if (isNew) {
                 add(marker);
