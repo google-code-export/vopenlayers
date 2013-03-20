@@ -1,14 +1,17 @@
 package org.vaadin.vol.client.ui;
 
+import org.vaadin.vol.client.ui.vcom.MarkerConnector;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.Icon;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Marker;
+import org.vaadin.vol.client.wrappers.Pixel;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Size;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,6 +24,7 @@ public class VMarker extends Widget implements VMarkable {
     protected String paintableId;
     protected ApplicationConnection client;
     private String pid;
+    private MarkerConnector connector;
 
     public VMarker() {
         setElement(Document.get().createDivElement());
@@ -102,7 +106,7 @@ public class VMarker extends Widget implements VMarkable {
                     .getIntAttribute("icon_h") : 32;
             return Icon.create(url, Size.create(width, height));
         }
-        return null;
+        return Icon.create(GWT.getModuleBaseForStaticFiles() + "img/marker.png", Size.create(32, 32), Pixel.create(-16, -32));
     }
 
     protected void beforeMarkerCreation(UIDL uidl) {
@@ -135,6 +139,10 @@ public class VMarker extends Widget implements VMarkable {
         if (marker != null) {
             getLayer().addMarker(marker);
         }
+    }
+
+    public void setConnector(MarkerConnector markerConnector) {
+        this.connector = markerConnector;
     }
 
 }
