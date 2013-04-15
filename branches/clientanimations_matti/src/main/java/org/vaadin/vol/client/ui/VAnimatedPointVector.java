@@ -49,7 +49,6 @@ public class VAnimatedPointVector extends VAbstractVector {
         }
 
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
             public void execute() {
                 startTime = new Date().getTime();
                 animationIndex = 0;

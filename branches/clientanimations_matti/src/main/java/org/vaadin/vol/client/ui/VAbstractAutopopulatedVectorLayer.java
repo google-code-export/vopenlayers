@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.SelectFeatureFactory;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.control.SelectFeature;
@@ -27,7 +28,9 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     private SelectFeature control;
     private StyleMap styleMap;
     private GwtOlHandler selectedhandler;
-    private String paintableId;
+    private GwtOlHandler beforeSelectedhandler;
+    private GwtOlHandler unselectedhandler;
+    private String selectionCtrlId;
 
     public VAbstractAutopopulatedVectorLayer() {
         super();
@@ -35,19 +38,19 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
 
     protected void updateGenericVectorLayersAttributes(UIDL uidl) {
         if (!uidl.hasAttribute("cached")) {
-            this.paintableId = uidl.getId();
             display = uidl.getStringAttribute("display");
+            selectionCtrlId = uidl.getStringAttribute("selectionCtrlId");
             setStyleMap(VVectorLayer.getStyleMap(uidl));
         }
     }
 
     protected void updateSelectionControl(final ApplicationConnection client) {
-        if (client.hasEventListeners(this, "vsel")) {
+    	boolean hasSelListener=client.hasEventListeners(this, "vsel");
+    	boolean hasUnselListener=client.hasEventListeners(this, "vunsel");
+    	boolean hasBefSelListener=client.hasEventListeners(this, "vbefsel");
+        if (hasSelListener || hasBefSelListener || hasUnselListener) {
             if (control == null) {
-                if (selectedhandler == null) {
-
-                    // create select/unselect feature and communicate fid to
-                    // server
+                if (hasSelListener && selectedhandler == null) {
                     selectedhandler = new GwtOlHandler() {
                         @SuppressWarnings("rawtypes")
                         public void onEvent(JsArray arguments) {
@@ -77,18 +80,101 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
                             String wkt = wktFormatter.write(vector);
                             client.updateVariable(paintableId, "wkt", wkt,
                                     false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vsel", fid,
+                                    false);
                             client.sendPendingVariableChanges();
                         }
                     };
                     layer.registerHandler("featureselected", selectedhandler);
                 }
-                control = SelectFeature.create(layer);
-                getMap().addControl(control);
+                if (hasUnselListener && unselectedhandler == null) {
+                    unselectedhandler = new GwtOlHandler() {
+                        @SuppressWarnings("rawtypes")
+                        public void onEvent(JsArray arguments) {
+                            ValueMap javaScriptObject = arguments.get(0).cast();
+                            Vector vector = javaScriptObject.getValueMap(
+                                    "feature").cast();
+                            String fid = vector.getFeatureId();
+                            ValueMap attr = vector.getAttributes();
+                            client.updateVariable(paintableId, "fid", fid,
+                                    false);
+                            Map<String, Object> hashMap = new HashMap<String, Object>();
+                            for (String key : attr.getKeySet()) {
+                                hashMap.put(key, attr.getString(key));
+                            }
+                            client.updateVariable(paintableId, "attr", hashMap,
+                                    false);
+                            Projection targetProjection = getMap()
+                                    .getProjection();
+                            String projection = getProjection();
+                            if (projection == null) {
+                                projection = "EPSG:4326";
+                            }
+                            Projection sourceProjection = Projection
+                                    .get(projection);
+                            WKT wktFormatter = WKT.create(sourceProjection,
+                                    targetProjection);
+                            String wkt = wktFormatter.write(vector);
+                            client.updateVariable(paintableId, "wkt", wkt,
+                                    false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vunsel", fid,
+                                    false);
+                            client.sendPendingVariableChanges();
+                        }
+                    };
+                    layer.registerHandler("featureunselected", unselectedhandler);
+                }
+                if (hasBefSelListener && beforeSelectedhandler == null) {
+                    beforeSelectedhandler = new GwtOlHandler() {
+                        @SuppressWarnings("rawtypes")
+                        public void onEvent(JsArray arguments) {
+                            ValueMap javaScriptObject = arguments.get(0).cast();
+                            Vector vector = javaScriptObject.getValueMap(
+                                    "feature").cast();
+                            String fid = vector.getFeatureId();
+                            ValueMap attr = vector.getAttributes();
+                            client.updateVariable(paintableId, "fid", fid,
+                                    false);
+                            Map<String, Object> hashMap = new HashMap<String, Object>();
+                            for (String key : attr.getKeySet()) {
+                                hashMap.put(key, attr.getString(key));
+                            }
+                            client.updateVariable(paintableId, "attr", hashMap,
+                                    false);
+                            Projection targetProjection = getMap()
+                                    .getProjection();
+                            String projection = getProjection();
+                            if (projection == null) {
+                                projection = "EPSG:4326";
+                            }
+                            Projection sourceProjection = Projection
+                                    .get(projection);
+                            WKT wktFormatter = WKT.create(sourceProjection,
+                                    targetProjection);
+                            String wkt = wktFormatter.write(vector);
+                            client.updateVariable(paintableId, "wkt", wkt,
+                                    false);
+                            // todo - maybe there is some more important object than fid 
+                            client.updateVariable(paintableId, "vbefsel", fid,
+                                    false);
+                            client.sendPendingVariableChanges();
+                        }
+                    };
+                    layer.registerReturnFalseHandler("beforefeatureselected", 
+                    		beforeSelectedhandler);
+                }
+                /*
+                 * In openLayers the constructor for OpenLayers.Control.SelectFeature
+                 * takes a array of layers. IMO all Instances of VAbstractAutopopulatedVectorLayer
+                 * should share only one map owned select control.
+                 */                
+                control = SelectFeatureFactory.getInst().getOrCreate(selectionCtrlId,getMap(),layer);
             }
             control.activate();
         } else if (control != null) {
-            control.deActivate();
-            getMap().removeControl(control);
+        	SelectFeatureFactory.getInst().removeLayer(control,selectionCtrlId,getMap(),layer);
             control = null;
         }
     }
@@ -116,5 +202,4 @@ public abstract class VAbstractAutopopulatedVectorLayer<T> extends
     public void setStyleMap(StyleMap styleMap) {
         this.styleMap = styleMap;
     }
-
 }

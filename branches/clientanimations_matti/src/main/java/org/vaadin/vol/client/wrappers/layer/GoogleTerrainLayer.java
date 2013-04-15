@@ -8,7 +8,7 @@ public class GoogleTerrainLayer extends Layer {
 	public native final static GoogleTerrainLayer create(String displayName, String projection)
 	/*-{
 
-		var options = {type: $wnd.google.maps.MapTypeId.TERRAIN, numZoomLevels: 17, sphericalMercator: true};
+		var options = {type: $wnd.google.maps.MapTypeId.TERRAIN, numZoomLevels: 22, sphericalMercator: true};
 		if(projection) {
 			options.projection = projection;
 		}

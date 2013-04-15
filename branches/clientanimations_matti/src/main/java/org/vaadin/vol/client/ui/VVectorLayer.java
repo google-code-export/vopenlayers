@@ -9,6 +9,7 @@ import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
+import org.vaadin.vol.client.wrappers.SelectFeatureFactory;
 import org.vaadin.vol.client.wrappers.Style;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
@@ -22,6 +23,7 @@ import org.vaadin.vol.client.wrappers.geometry.Point;
 import org.vaadin.vol.client.wrappers.handler.PathHandler;
 import org.vaadin.vol.client.wrappers.handler.PointHandler;
 import org.vaadin.vol.client.wrappers.handler.PolygonHandler;
+import org.vaadin.vol.client.wrappers.handler.RegularPolygonHandler;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
@@ -92,12 +94,6 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
             vectors.registerHandler("featureunselected", new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-                    if (updating) {
-                        // ignore selections that happend during update, those
-                        // should be already known and notified by the server
-                        // side
-                        return;
-                    }
                     ValueMap javaScriptObject = arguments.get(0).cast();
                     Vector vector = javaScriptObject.getValueMap("feature")
                             .cast();
@@ -105,7 +101,10 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         VAbstractVector v = (VAbstractVector) w;
                         if (v.getVector() == vector) {
                             v.revertDefaultIntent();
-                            if (client.hasEventListeners(VVectorLayer.this,
+                            // ignore selections that happend during update, those
+                            // should be already known and notified by the server
+                            // side
+                            if (!updating && client.hasEventListeners(VVectorLayer.this,
                                     "vusel")) {
                                 client.updateVariable(paintableId, "vusel", v,
                                         true);
@@ -184,6 +183,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
     private boolean added = false;
     private String currentSelectionMode;
     private SelectFeature selectFeature;
+    private String selectionCtrlId;             // Common SelectFeature control identifier
 
     private GwtOlHandler getFeatureAddedListener() {
         if (_fAddedListener == null) {
@@ -199,7 +199,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                         Vector feature = event.getFieldByName("feature").cast();
                         Geometry geometry = feature.getGeometry();
 
-                        if (drawingMode == "AREA" || drawingMode == "LINE") {
+                        if (drawingMode == "AREA" || drawingMode == "LINE" || drawingMode == "RECTANGLE" || drawingMode == "CIRCLE") {
                             LineString ls = geometry.cast();
                             JsArray<Point> allVertices = ls.getAllVertices();
                             // TODO this can be removed??
@@ -262,6 +262,11 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
         updateStyleMap(layer);
         setDrawingMode(layer.getStringAttribute("dmode"));
+        
+        // Identifier for SelectFeature control to use ... layers specifying the
+        // the same identifier can all listen for their own Select events on the map.
+        selectionCtrlId = layer.getStringAttribute("selectionCtrlId");
+        
         setSelectionMode(layer);
 
         HashSet<Widget> orphaned = new HashSet<Widget>();
@@ -291,14 +296,21 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         String newSelectionMode = layer.getStringAttribute("smode").intern();
         if (currentSelectionMode != newSelectionMode) {
             if (selectFeature != null) {
+                /* remove this layer from the SelectFeature instead of removing the control
                 selectFeature.deActivate();
                 getMap().removeControl(selectFeature);
+                */
+                SelectFeatureFactory.getInst().removeLayer(selectFeature, selectionCtrlId, getMap(), vectors);
                 selectFeature = null;
             }
 
             if (newSelectionMode != "NONE") {
+                /* delegate responsibility for managing the SelectFeature to the factory;
+                 * just let it know we want to register this vectorlayer in the SelectFeature.
                 selectFeature = SelectFeature.create(vectors);
                 getMap().addControl(selectFeature);
+                */
+                selectFeature = SelectFeatureFactory.getInst().getOrCreate(selectionCtrlId, getMap(), vectors);
                 selectFeature.activate();
             }
 
@@ -312,7 +324,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                     // ensure selection
                     if (drawingMode == "MODIFY") {
                         ModifyFeature mf = (ModifyFeature) df.cast();
-                        if(mf.getModifiedFeature() != null) {
+                        if (mf.getModifiedFeature() != null) {
                             mf.unselect(mf.getModifiedFeature());
                         }
                         mf.select(selectedVector.getVector());
@@ -331,8 +343,10 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 } else {
                     try {
                         selectFeature.unselectAll();
+                        
                     } catch (Exception e) {
-                        // NOP, may throw exception if selected vector gets deleted
+                        // NOP, may throw exception if selected vector gets
+                        // deleted
                     }
                 }
             }
@@ -344,9 +358,9 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         if (drawingMode != newDrawingMode) {
             if (drawingMode != "NONE") {
                 // remove old drawing feature
-                if(drawingMode == "MODIFY") {
+                if (drawingMode == "MODIFY") {
                     ModifyFeature mf = df.cast();
-                    if(mf.getModifiedFeature() != null) {
+                    if (mf.getModifiedFeature() != null) {
                         mf.unselect(mf.getModifiedFeature());
                     }
                 }
@@ -364,6 +378,10 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
                 df = ModifyFeature.create(getLayer());
             } else if (drawingMode == "POINT") {
                 df = DrawFeature.create(getLayer(), PointHandler.get());
+            } else if (drawingMode == "RECTANGLE") {
+                df = DrawFeature.create(getLayer(), RegularPolygonHandler.get(), RegularPolygonHandler.getRectangleOptions());
+            } else if (drawingMode == "CIRCLE") {
+                df = DrawFeature.create(getLayer(), RegularPolygonHandler.get(), RegularPolygonHandler.getCircleOptions());
             }
             if (df != null) {
                 getMap().addControl(df);
@@ -469,8 +487,17 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
 
     @Override
     protected void onDetach() {
-        super.onDetach();
         getMap().removeLayer(getLayer());
+        added = false;
+        super.onDetach();
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        if (!added && vectors != null) {
+            getMap().addLayer(getLayer());
+        }
     }
 
     private Map getMap() {

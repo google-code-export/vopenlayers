@@ -1,5 +1,6 @@
 package org.vaadin.vol.client.wrappers.layer;
 
+import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.StyleMap;
 import org.vaadin.vol.client.wrappers.Vector;
 
@@ -74,5 +75,56 @@ public class VectorLayer extends Layer {
     /*-{
         this.removeAllFeatures();
     }-*/;
+
+    /**
+     * can set the visibility of a layer. inivisble layer are in layer switcher 
+     * but will not loaded until they are visible.
+     * @param visibility
+     */
+    public native final void setVisability(boolean visibility) 
+    /*-{
+        this.setVisibility(visibility);
+    }-*/;
+    
+    /**
+     * it's maybe useful for blocking beforefeatureselected events
+     * @param eventName
+     * @param handler
+     */
+	public native final void registerReturnFalseHandler(String eventName, GwtOlHandler handler) 
+	/*-{
+		var f = function() {
+			$entry(handler.@org.vaadin.vol.client.wrappers.GwtOlHandler::onEvent(Lcom/google/gwt/core/client/JsArray;)(arguments));
+			return false;
+		};
+		this.events.addEventType(eventName);
+		this.events.register(eventName,this,f);
+		
+	}-*/;
+	
+	/**
+	 * set to restrict content for the layer
+	 * @param filterType kind of filter (==,!=,<,<=,>,>=,..,~)
+	 * @param filterProp filtered property
+	 * @param filterValue value for filter
+	 */
+	public native final void setFilter(String filterType,String filterProp,
+			String filterValue)
+	/*-{
+	 if (filterValue) {
+		 this.filter=new $wnd.OpenLayers.Filter.Comparison({
+	                            type: filterType,
+	                            property: filterProp,
+	                            value: filterValue
+	                        });
+     }
+     else
+     	 this.filter=null;
+	}-*/;
+
+	public native final void refresh()
+	/*-{
+ 		this.refresh({force: true});
+	}-*/;
 
 }

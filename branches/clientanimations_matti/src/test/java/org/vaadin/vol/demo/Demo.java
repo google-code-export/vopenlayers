@@ -277,8 +277,10 @@ public class Demo extends AbstractVOLTest {
                 if (mode == DrawingMode.MODIFY || mode == DrawingMode.AREA
                         || mode == DrawingMode.LINE
                         || mode == DrawingMode.POINT
+                       	|| mode == DrawingMode.RECTANGLE
+                       	|| mode == DrawingMode.CIRCLE
                         || mode == DrawingMode.NONE) {
-                    vectorLayer.setDrawindMode(mode);
+                    vectorLayer.setDrawingMode(mode);
                 } else {
                     showNotification("Sorry, feature is on TODO list. Try area.");
                 }
