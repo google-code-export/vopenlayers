@@ -8,7 +8,7 @@ public class GoogleStreetLayer extends Layer {
 	public native final static GoogleStreetLayer create(String displayName, String projection)
 	/*-{
 
-		var options = {numZoomLevels: 17, sphericalMercator: true};
+		var options = {numZoomLevels: 22, sphericalMercator: true};
 		if(projection) {
 			options.projection = projection;
 		}

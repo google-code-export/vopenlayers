@@ -1,22 +1,15 @@
 package org.vaadin.vol;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import com.vaadin.event.Action;
 import com.vaadin.terminal.KeyMapper;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
+import com.vaadin.tools.ReflectTools;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Server side component for the VOpenLayersMap widget.
@@ -72,7 +65,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * A typed alias for {@link #addComponent(Component)}.
-     * 
+     *
      * @param layer
      */
     public void addLayer(Layer layer) {
@@ -91,10 +84,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * certain types of Components.
      * <p>
      * Developers are encouraged to use better typed methods instead:
-     * 
+     *
      * @see #addLayer(Layer)
      * @see #addPopup(Popup)
-     * 
+     *
      * @see com.vaadin.ui.AbstractComponentContainer#addComponent(com.vaadin.ui.Component)
      */
     @Override
@@ -113,7 +106,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Set the center of map to the center of a bounds
-     * 
+     *
      */
     public void setCenter(Bounds bounds) {
         centerLat = (bounds.getBottom() + bounds.getTop()) / 2.0;
@@ -142,14 +135,31 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     private Bounds restrictedExtend;
     private String projection;
 
-    private void setDirty(String fieldName) {
-        if (!fullRepaint) {
-            dirtyFields.add(fieldName);
-            partialPaint();
+    /**
+     * Sets one or more fields as 'dirty' in order to do a partial repaint of just those fields
+     * @param fieldNames String var-args array of field names to mark as 'dirty'
+     */
+    protected void setDirty(String... fieldNames) {
+        if (!fullRepaint && fieldNames != null && fieldNames.length > 0) {
+            boolean needsParitialPaint = false;
+            for (String fieldName : fieldNames) {
+                if (fieldName != null) {
+                    dirtyFields.add(fieldName);
+                    needsParitialPaint = true;
+                }
+            }
+            if (needsParitialPaint)
+                partialPaint();
         }
     }
 
-    private boolean isDirty(String fieldName) {
+    /**
+     * Determines whether or not a field has been marked as 'dirty'.  Used during {@see #paintContent} to determine if
+     * a field should be written to the {@see PaintTarget}.
+     * @param fieldName name of field
+     * @return true if field is 'dirty, false otherwise
+     */
+    protected boolean isDirty(String fieldName) {
         /*
          * If full repaint if request repaint called directly or painted without
          * repaint.
@@ -205,7 +215,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Receive and handle events and other variable changes from the client.
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -213,6 +223,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         super.changeVariables(source, variables);
         if (variables.containsKey("top")) {
             updateExtent(variables);
+            fireEvent(new ExtentChangeEvent());
         }
 
         // Actions
@@ -233,6 +244,24 @@ public class OpenLayersMap extends AbstractComponentContainer implements
                 }
             }
         }
+
+        if (variables.containsKey("clicked")) {
+            double lon = (Double) variables.get("lon");
+            double lat = (Double) variables.get("lat");
+            int x = (Integer) variables.get("x");
+            int y = (Integer) variables.get("y");
+            int width = (Integer) variables.get("width");
+            int height = (Integer) variables.get("height");
+            PointInformation pointInformation = new PointInformation();
+            pointInformation.setLon(lon);
+            pointInformation.setLat(lat);
+            pointInformation.setX(x);
+            pointInformation.setY(y);
+            pointInformation.setWidth(width);
+            pointInformation.setHeight(height);
+            pointInformation.setBounds(getExtend());
+            mapClicked(pointInformation);
+        }
     }
 
     protected void updateExtent(Map<String, Object> variables) {
@@ -246,7 +275,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Note, this does not work until the map is rendered.
-     * 
+     *
      * @return
      */
     public Bounds getExtend() {
@@ -301,7 +330,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Also note that init options only take effect if they are set before the
      * map gets rendered.
-     * 
+     *
      * @param jsMapOptions
      */
     public void setJsMapOptions(String jsMapOptions) {
@@ -314,10 +343,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Zooms the map to display given bounds.
-     * 
+     *
      * <p>
      * Note that this method overrides possibly set center and zoom levels.
-     * 
+     *
      * @param bounds
      */
     public void zoomToExtent(Bounds bounds) {
@@ -339,7 +368,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * ensure about this by either using a base layer that only contains the
      * desired area or by "masking" out the undesired area with e.g. a vector
      * layer.
-     * 
+     *
      * @param bounds
      */
     public void setRestrictedExtent(Bounds bounds) {
@@ -354,7 +383,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * <p>
      * Note that resetting projection on already rendered map may cause
      * unexpected results.
-     * 
+     *
      * @param projection
      */
     public void setApiProjection(String projection) {
@@ -366,7 +395,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
      * Gets the projection which is used by the user of this map. E.g. values
      * passed to API like {@link #setCenter(double, double)} should be in the
      * same projection.
-     * 
+     *
      * @return the projection used, defaults to EPSG:4326
      */
     public String getApiProjection() {
@@ -456,7 +485,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     /**
      * Registers a new action handler for this container
-     * 
+     *
      * @see com.vaadin.event.Action.Container#addActionHandler(Action.Handler)
      */
     public void addActionHandler(Action.Handler actionHandler) {
@@ -471,7 +500,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     /**
      * Removes a previously registered action handler for the contents of this
      * container.
-     * 
+     *
      * @see com.vaadin.event.Action.Container#removeActionHandler(Action.Handler)
      */
     public void removeActionHandler(Action.Handler actionHandler) {
@@ -484,4 +513,78 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     public void removeLayer(Layer layer) {
         removeComponent(layer);
     }
+
+    private void mapClicked(PointInformation pointInfo) {
+        MapClickEvent mapClickEvent = new MapClickEvent(this, pointInfo);
+        fireEvent(mapClickEvent);
+    }
+
+    public interface MapClickListener {
+
+        public static final Method method = ReflectTools.findMethod(
+                MapClickListener.class, "mapClicked", MapClickEvent.class);
+
+        public void mapClicked(MapClickEvent event);
+
+    }
+
+    public void addListener(MapClickListener listener) {
+        addListener("click", MapClickEvent.class, listener,
+                MapClickListener.method);
+    }
+
+    public void removeListener(MapClickListener listener) {
+        removeListener("click", MapClickEvent.class, listener);
+    }
+
+    public class MapClickEvent extends Event {
+
+        private PointInformation pointInfo;
+
+        public MapClickEvent(Component source, PointInformation pointInfo) {
+            super(source);
+            setPointInfo(pointInfo);
+
+        }
+
+        private void setPointInfo(PointInformation pointInfo) {
+            this.pointInfo = pointInfo;
+
+        }
+
+        public PointInformation getPointInfo() {
+            return pointInfo;
+        }
+    }
+
+    public class ExtentChangeEvent extends Event {
+        public ExtentChangeEvent() {
+            super(OpenLayersMap.this);
+        }
+
+        @Override
+        public OpenLayersMap getComponent() {
+            return (OpenLayersMap) super.getComponent();
+        }
+    }
+
+    public interface ExtentChangeListener {
+
+        public static final Method method = ReflectTools.findMethod(
+                ExtentChangeListener.class, "extentChanged",
+                ExtentChangeEvent.class);
+
+        public void extentChanged(ExtentChangeEvent event);
+
+    }
+
+    public void addListener(ExtentChangeListener listener) {
+        addListener(ExtentChangeEvent.class, listener,
+                ExtentChangeListener.method);
+    }
+
+    public void removeListener(ExtentChangeListener listener) {
+        removeListener(ExtentChangeEvent.class, listener);
+    }
+
 }

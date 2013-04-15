@@ -26,7 +26,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         NONE, SIMPLE
         // MULTI, MULTI_WITH_AREA_SELECTION etc
     }
-    
+
     private Vector selectedVector;
 
     private String displayName = "Vector layer";
@@ -36,10 +36,12 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     private SelectionMode selectionMode = SelectionMode.NONE;
 
     public enum DrawingMode {
-        NONE, LINE, AREA, POINT, MODIFY
+        NONE, LINE, AREA, RECTANGLE, CIRCLE, POINT, MODIFY
     }
 
-    private DrawingMode drawindMode = DrawingMode.NONE;
+    private DrawingMode drawingMode = DrawingMode.NONE;
+    
+    private String selectionCtrlId;             // Common SelectFeature control identifier
 
     public void addVector(Vector m) {
         addComponent(m);
@@ -48,9 +50,14 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     @Override
     public void paintContent(PaintTarget target) throws PaintException {
         target.addAttribute("name", displayName);
-        target.addAttribute("dmode", drawindMode.toString());
+        target.addAttribute("dmode", drawingMode.toString());
         target.addAttribute("smode", selectionMode.toString());
-        if(selectedVector != null) {
+        
+        if (selectionCtrlId != null) {
+            target.addAttribute("selectionCtrlId", selectionCtrlId);
+        }
+        
+        if (selectedVector != null) {
             target.addAttribute("svector", selectedVector);
         }
 
@@ -88,20 +95,20 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public void removeComponent(Component c) {
         vectors.remove(c);
         super.removeComponent(c);
-        if(selectedVector == c) {
+        if (selectedVector == c) {
             selectedVector = null;
             fireEvent(new VectorUnSelectedEvent(this, (Vector) c));
         }
         requestRepaint();
     }
 
-    public void setDrawindMode(DrawingMode drawindMode) {
-        this.drawindMode = drawindMode;
+    public void setDrawingMode(DrawingMode drawingMode) {
+        this.drawingMode = drawingMode;
         requestRepaint();
     }
 
-    public DrawingMode getDrawindMode() {
-        return drawindMode;
+    public DrawingMode getDrawingMode() {
+        return drawingMode;
     }
 
     @Override
@@ -116,15 +123,17 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 points[i] = Point.valueOf(object[i]);
             }
 
-            if (drawindMode == DrawingMode.LINE) {
+            if (drawingMode == DrawingMode.LINE) {
                 PolyLine polyline = new PolyLine();
                 polyline.setPoints(points);
                 newVectorPainted(polyline);
-            } else if (drawindMode == DrawingMode.AREA) {
+            } else if (drawingMode == DrawingMode.AREA 
+            		|| drawingMode == DrawingMode.RECTANGLE 
+            		|| drawingMode == DrawingMode.CIRCLE) {
                 Area area = new Area();
                 area.setPoints(points);
                 newVectorPainted(area);
-            } else if (drawindMode == DrawingMode.MODIFY) {
+            } else if (drawingMode == DrawingMode.MODIFY) {
                 Vector vector = (Vector) variables.get("modifiedVector");
                 if (vector != null) {
                     vector.setPointsWithoutRepaint(points);
@@ -135,7 +144,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 }
             }
         }
-        if (drawindMode == DrawingMode.POINT && variables.containsKey("x")) {
+        if (drawingMode == DrawingMode.POINT && variables.containsKey("x")) {
             Double x = (Double) variables.get("x");
             Double y = (Double) variables.get("y");
             PointVector point = new PointVector(x, y);
@@ -143,7 +152,7 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
         }
         if (variables.containsKey("vusel")) {
             Vector object = (Vector) variables.get("vusel");
-            if(selectedVector == object) {
+            if (selectedVector == object) {
                 selectedVector = null;
             }
             VectorUnSelectedEvent vectorSelectedEvent = new VectorUnSelectedEvent(
@@ -218,21 +227,29 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     public String getDisplayName() {
         return displayName;
     }
-    
+
     /**
      * @return the stylemap
      */
     public StyleMap getStyleMap() {
-    	return stylemap;
+        return stylemap;
     }
-    
+
     /**
      * @param stylemap
      *            the stylemap to set
      */
     public void setStyleMap(StyleMap stylemap) {
-    	this.stylemap = stylemap;
-    	requestRepaint();
+        this.stylemap = stylemap;
+        requestRepaint();
+    }
+
+    public String getSelectionCtrlId() {
+        return selectionCtrlId;
+    }
+
+    public void setSelectionCtrlId(String selectionCtrlId) {
+        this.selectionCtrlId = selectionCtrlId;
     }
 
     public void setSelectionMode(SelectionMode selectionMode) {
@@ -351,12 +368,12 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
     }
 
     public void setSelectedVector(Vector selectedVector) {
-        if(this.selectedVector != selectedVector) {
-            if(this.selectedVector != null) {
+        if (this.selectedVector != selectedVector) {
+            if (this.selectedVector != null) {
                 fireEvent(new VectorUnSelectedEvent(this, this.selectedVector));
             }
             this.selectedVector = selectedVector;
-            if(selectedVector != null) {
+            if (selectedVector != null) {
                 fireEvent(new VectorSelectedEvent(this, selectedVector));
             }
             requestRepaint();

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.vaadin.vol.client.wrappers.Bounds;
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
+import org.vaadin.vol.client.wrappers.JsObject;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Pixel;
@@ -14,8 +15,10 @@ import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,6 +33,7 @@ import com.vaadin.terminal.gwt.client.VConsole;
 import com.vaadin.terminal.gwt.client.ui.Action;
 import com.vaadin.terminal.gwt.client.ui.ActionOwner;
 import com.vaadin.terminal.gwt.client.ui.TreeAction;
+import com.vaadin.terminal.gwt.client.ui.VLazyExecutor;
 
 /**
  * Client side widget which communicates with the server. Messages from the
@@ -62,6 +66,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     private HashSet<String> orphanedcomponents;
 
     private GwtOlHandler extentChangeListener;
+    private GwtOlHandler clickListener;
 
     private boolean immediate;
 
@@ -161,6 +166,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             extentChangeListener = new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
+                    
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);
                     Bounds extent = map.getExtent();
@@ -181,12 +187,46 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                 }
             };
             getMap().registerEventHandler("moveend", extentChangeListener);
-            getMap().registerEventHandler("zoomed", extentChangeListener);
 
-            /*
-             * Update extent on first paint.
-             */
-            // extentChangeListener.onEvent(null);
+        }
+
+        // if (clickListener == null) {
+        if (client.hasEventListeners(this, "click")) {
+            if (clickListener == null) {
+                clickListener = new GwtOlHandler() {
+
+                    public void onEvent(JsArray arguments) {
+                        JsObject event = arguments.get(0).cast();
+                        Pixel pixel = event.getFieldByName("xy").cast();
+                        LonLat lonlat = map.getLonLatFromPixel(pixel);
+                        // TODO : we better create a mechanism to define base
+                        // projection in this class according to our base layer
+                        // selection
+                        Projection sourceProjection = Projection
+                                .get("EPSG:900913");
+                        lonlat.transform(sourceProjection, serverSideProjection);
+                        client.updateVariable(paintableId, "x", pixel.getX(),
+                                false);
+                        client.updateVariable(paintableId, "y", pixel.getY(),
+                                false);
+                        client.updateVariable(paintableId, "height",
+                                map.getOffsetHeight(), false);
+                        client.updateVariable(paintableId, "width",
+                                map.getOffsetWidth(), false);
+                        client.updateVariable(paintableId, "lon",
+                                lonlat.getLon(), false);
+                        client.updateVariable(paintableId, "lat",
+                                lonlat.getLat(), false);
+                        client.updateVariable(paintableId, "clicked", "", true); // Just
+                                                                                 // //
+                    }
+                };
+                getMap().registerEventHandler("click", clickListener);
+            }
+            
+           
+        } else {
+            // TODO : HOW WILL WE UNREGISTER EVENTHANDLER ???
         }
 
         // Save reference to server connection object to be able to send
@@ -372,7 +412,8 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     }
 
     public boolean hasChildComponent(Widget component) {
-        return fakePaintables.getWidgetIndex(component) != -1;
+        return fakePaintables.getWidgetIndex(component) != -1
+                || getChildren().contains(component);
     }
 
     public void updateCaption(Paintable component, UIDL uidl) {
@@ -386,8 +427,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
     }
 
     public RenderSpace getAllocatedSpace(Widget child) {
-        // TODO Auto-generated method stub
-        return null;
+        return new RenderSpace(0, 0, false);
     }
 
     public Map getMap() {
@@ -407,5 +447,28 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
      */
     public void setProjection(Projection projection) {
         serverSideProjection = projection;
+    }
+
+    public void attachSpecialWidget(Widget paintable,
+            com.google.gwt.dom.client.Element elementById) {
+        add(paintable, (Element) elementById.cast());
+    }
+    
+    VLazyExecutor resizeMap = new VLazyExecutor(300, new ScheduledCommand() {
+        public void execute() {
+            map.updateSize();
+        }
+    });
+    
+    @Override
+    public void setWidth(String width) {
+        super.setWidth(width);
+        resizeMap.trigger();
+    }
+    
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        resizeMap.trigger();
     }
 }
