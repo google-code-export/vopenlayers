@@ -13,6 +13,7 @@ import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Pixel;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
+import org.vaadin.vol.client.wrappers.layer.Layer;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.WidgetCollection;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
@@ -67,6 +69,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
 
     private GwtOlHandler extentChangeListener;
     private GwtOlHandler clickListener;
+    private GwtOlHandler changeBaseLayer;
 
     private boolean immediate;
 
@@ -190,6 +193,24 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
 
         }
 
+        if (changeBaseLayer == null) {
+            changeBaseLayer = new GwtOlHandler() {
+                public void onEvent(JsArray arguments) {
+                    Layer baseLayer = map.getBaseLayer();
+                    for (Widget widget : components.values()) {
+						if (widget instanceof VLayer) {
+							VLayer vlayer = (VLayer) widget;
+							if( baseLayer == vlayer.getLayer()) {
+			                    client.updateVariable(paintableId, "baseLayer", vlayer, true);
+								return;
+							}
+						}
+					}
+                }
+            };
+            getMap().registerEventHandler("changebaselayer", changeBaseLayer);
+        }
+        
         // if (clickListener == null) {
         if (client.hasEventListeners(this, "click")) {
             if (clickListener == null) {
@@ -284,6 +305,12 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             bodyActionKeys = null;
         }
 
+        if (uidl.hasAttribute("baseLayer")) {
+            //Server side wants to change the base layer.
+            VLayer baseLayer = (VLayer) uidl.getPaintableAttribute("baseLayer", client);
+            getMap().setBaseLayer(baseLayer.getLayer());
+        }
+        
         updateActionMap(uidl);
     }
 

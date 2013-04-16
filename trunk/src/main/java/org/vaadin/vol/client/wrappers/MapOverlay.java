@@ -130,6 +130,11 @@ public class MapOverlay extends AbstractOpenLayersWrapper {
     	return this.baseLayer;
     }-*/;
 
+    public final native void setBaseLayer(Layer layer) 
+    /*-{
+        this.setBaseLayer(layer);
+    }-*/;
+
     public final native JsArray<Control> getControls()
     /*-{
     	return this.controls;

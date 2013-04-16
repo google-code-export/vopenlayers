@@ -32,6 +32,11 @@ public abstract class Layer extends AbstractOpenLayersWrapper {
 	 	return this.id;
 	}-*/;
 
+	public final native String getName()
+	/*-{
+	        return this.name;
+	}-*/;
+	
 	public final native Bounds getMaxExtent() 
 	/*-{
 		return this.getMaxExtent();
