@@ -14,12 +14,12 @@ public class Pixel extends JavaScriptObject {
 
     public native final int getX()
     /*-{
-    return this.x;
+    	return this.x | 0;  // guarantee we return an integer by truncating any decimal digits
     }-*/;
 
     public native final int getY()
     /*-{
-    return this.y;
+    	return this.y | 0;	// guarantee we return an integer by truncating any decimal digits
     }-*/;
 
     /**
