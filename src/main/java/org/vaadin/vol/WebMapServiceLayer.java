@@ -24,12 +24,14 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 	private String feature_id = "";
 	private String format = "image/jpeg";
 	private String projection;
+	private String styles;
 
 	public WebMapServiceLayer() {
 
 	}
 
 	public void paintContent(PaintTarget target) throws PaintException {
+		super.paintContent(target);
 		target.addAttribute("uri", uri);
 		target.addAttribute("type", type);
 		target.addAttribute("layers", layers);
@@ -46,6 +48,19 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 		if(cqlFilter != null) {
 			target.addAttribute("cqlFilter", cqlFilter);
 		}
+		if(styles != null) {
+			target.addAttribute("styles", styles);
+		}
+	}
+
+		
+	public String getStyles() {
+		return styles;
+	}
+
+	public void setStyles(String styles) {
+		this.styles = styles;
+		requestRepaint();
 	}
 
 	public void setUri(String uri) {
