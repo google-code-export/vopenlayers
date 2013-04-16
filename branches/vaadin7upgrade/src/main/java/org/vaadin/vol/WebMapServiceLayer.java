@@ -6,9 +6,12 @@ package org.vaadin.vol;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.LegacyComponent;
+
+import java.util.Map;
 
 //@ClientWidget(VWebMapServiceLayer.class)
-public class WebMapServiceLayer extends AbstractComponent implements Layer {
+public class WebMapServiceLayer extends AbstractComponent implements Layer, LegacyComponent {
 	private String uri = "";
 	private String type = "wms";
 	private String layers = "basic";
@@ -20,6 +23,7 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 	private String feature_id = "";
 	private String format = "image/jpeg";
 	private String projection;
+	private String version = "1.0.0";
 
 	public WebMapServiceLayer() {
 
@@ -35,6 +39,7 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
 		target.addAttribute("featureid", feature_id);
 		target.addAttribute("format", format);
 		target.addAttribute("transparent", transparent);
+		target.addAttribute("version", version);
 		if(projection != null) {
 		    target.addAttribute("projection", projection);
 		}
@@ -152,6 +157,19 @@ public class WebMapServiceLayer extends AbstractComponent implements Layer {
     public void setProjection(String projection) {
         this.projection = projection;
     }
-	
-	
+    
+    public void setVersion(String version) {
+        this.version = version;
+        requestRepaint();
+    }
+    
+    public String getVersion() {
+        return version;
+    }
+
+    @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        // TODO Auto-generated method stub
+        
+    }	
 }
