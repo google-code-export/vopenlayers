@@ -27,6 +27,8 @@ import org.vaadin.vol.client.wrappers.handler.RegularPolygonHandler;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
@@ -34,6 +36,7 @@ import com.vaadin.terminal.gwt.client.Container;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.RenderSpace;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.terminal.gwt.client.Util;
 import com.vaadin.terminal.gwt.client.ValueMap;
 
 public class VVectorLayer extends FlowPanel implements VLayer, Container {
@@ -292,7 +295,7 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         updating = false;
     }
 
-    private void setSelectionMode(UIDL layer) {
+    private void setSelectionMode(final UIDL layer) {
         String newSelectionMode = layer.getStringAttribute("smode").intern();
         if (currentSelectionMode != newSelectionMode) {
             if (selectFeature != null) {
@@ -318,20 +321,28 @@ public class VVectorLayer extends FlowPanel implements VLayer, Container {
         }
         if (currentSelectionMode != "NONE" || drawingMode == "MODIFY") {
             if (layer.hasAttribute("svector")) {
-                VAbstractVector selectedVector = (VAbstractVector) layer
-                        .getPaintableAttribute("svector", client);
-                if (selectedVector != null) {
-                    // ensure selection
-                    if (drawingMode == "MODIFY") {
-                        ModifyFeature mf = (ModifyFeature) df.cast();
-                        if (mf.getModifiedFeature() != null) {
-                            mf.unselect(mf.getModifiedFeature());
-                        }
-                        mf.select(selectedVector.getVector());
-                    } else {
-                        selectFeature.select(selectedVector.getVector());
-                    }
-                }
+            	Scheduler.get().scheduleFinally(new ScheduledCommand() {
+					
+					public void execute() {
+						VAbstractVector selectedVector = (VAbstractVector) layer
+								.getPaintableAttribute("svector", client);
+						if (selectedVector != null) {
+							updating = true;
+							// ensure selection
+							if (drawingMode == "MODIFY") {
+								ModifyFeature mf = (ModifyFeature) df.cast();
+								if (mf.getModifiedFeature() != null) {
+									mf.unselect(mf.getModifiedFeature());
+								}
+								mf.select(selectedVector.getVector());
+							} else {
+								selectFeature.select(selectedVector.getVector());
+							}
+							updating = false;
+						}
+						
+					}
+				});
             } else {
                 // remove selection
                 if (drawingMode == "MODIFY") {
