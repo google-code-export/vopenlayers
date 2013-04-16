@@ -34,7 +34,7 @@ public class GoogleStreetMapLayer extends AbstractComponent implements Layer {
 			target.addAttribute("projection", projection);
 		}
 		if(displayName != null) {
-			target.addAttribute("displayName", displayName);
+			target.addAttribute("name", displayName);
 		}
 	}
 
