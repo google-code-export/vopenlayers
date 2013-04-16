@@ -11,28 +11,30 @@ public class Bounds implements Serializable {
     private double bottom;
     private double left;
     private double right;
+    
+    private boolean empty = true;
 
     public Bounds(Point... points) {
-        init();
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
-            extend(p);
-        }
-        if(points.length == 1) {
-            extend(points[0]);
+    	if(points.length == 0) {
+    		return;
+    	}
+        
+        Point first = points[0];
+		init(first);
+
+        for (Point point : points) {
+        	extend(point);
         }
     }
 
-    /**
-     * Init value are first point check and speed up bounds computing with huge
-     * arrays
-     */
-    private void init() {
-        bottom = +90.00;
-        top = -90.00;
-        right = -180.00;
-        left = +180.00;
-    }
+	private void init(Point first) {
+		top = first.getLat();
+        bottom = first.getLat();
+        right = first.getLon();
+        left = first.getLon();
+        empty = false;
+	}
+
 
     /**
      * extend(Point... points) will be useful in case of multiple vector on the
@@ -49,18 +51,24 @@ public class Bounds implements Serializable {
     }
 
     public void extend(Point p) {
-        double lon = p.getLon();
-        if (lon < left) {
-            left = lon;
-        } else if (lon > right) {
-            right = lon;
-        }
-        double lat = p.getLat();
-        if (lat < bottom) {
-            bottom = lat;
-        } else if (lat > top) {
-            top = lat;
-        }
+    	if(empty) {
+    		init(p);
+    	} else {
+    		double lon = p.getLon();
+    		if (lon < left) {
+    			left = lon;
+    		}
+    		if (lon > right) {
+    			right = lon;
+    		}
+    		double lat = p.getLat();
+    		if (lat < bottom) {
+    			bottom = lat;
+    		}
+    		if (lat > top) {
+    			top = lat;
+    		}
+    	}
         // TODO figure out how to behave on poles and in date line
     }
 
