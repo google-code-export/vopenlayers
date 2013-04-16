@@ -132,7 +132,7 @@ public class VolExampleApplication extends com.vaadin.Application {
                         || mode == DrawingMode.LINE
                         || mode == DrawingMode.POINT
                         || mode == DrawingMode.NONE) {
-                    vectorLayer.setDrawindMode(mode);
+                    vectorLayer.setDrawingMode(mode);
                 } else {
                     mainWindow
                             .showNotification("Sorry, feature is on TODO list. Try area.");
