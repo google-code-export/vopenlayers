@@ -11,6 +11,7 @@ import org.vaadin.vol.client.wrappers.Icon;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Marker;
+import org.vaadin.vol.client.wrappers.Pixel;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Size;
 import org.vaadin.vol.client.wrappers.layer.MarkerLayer;
@@ -99,6 +100,11 @@ public class VMarker extends Widget implements VMarkable {
                     .getIntAttribute("icon_w") : 32;
             int height = childUIDL.hasAttribute("icon_h") ? childUIDL
                     .getIntAttribute("icon_h") : 32;
+            if(childUIDL.hasAttribute("icon_ox") && childUIDL.hasAttribute("icon_oy")) {
+            	return Icon.create(url, Size.create(width, height), 
+            			Pixel.create(childUIDL.getIntAttribute("icon_ox"),
+            					childUIDL.getIntAttribute("icon_oy")));
+            }
             return Icon.create(url, Size.create(width, height));
         }
         return null;

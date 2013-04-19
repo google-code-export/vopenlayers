@@ -24,6 +24,8 @@ public class Marker extends AbstractComponent {
 	private String projection = "EPSG:4326";
 	private int icon_w;
 	private int icon_h;
+	private int icon_ox = Integer.MIN_VALUE; // Integer.MIN_VALUE means ignore explicit offset
+	private int icon_oy = Integer.MIN_VALUE; // Integer.MIN_VALUE means ignore explicit offset
 
 	public Marker(double lon, double lat) {
 		this.lon = lon;
@@ -49,18 +51,25 @@ public class Marker extends AbstractComponent {
 	}
 
 	public void setIcon(String url, int width, int height) {
-		setIcon(new ExternalResource(url));
-		icon_w = width;
-		icon_h = height;
-		requestRepaint();
+		this.setIcon(new ExternalResource(url), width, height, Integer.MIN_VALUE, Integer.MIN_VALUE);
 	}
 
+	public void setIcon(String url, int width, int height, int xOffset, int yOffset) {
+		this.setIcon(new ExternalResource(url), width, height, xOffset, yOffset);
+	}
+	
 	public void setIcon(Resource icon, int width, int height) {
-		setIcon(icon);
-		icon_w = width;
-		icon_h = height;
+		this.setIcon(icon, width, height, Integer.MIN_VALUE, Integer.MIN_VALUE);
 	}
 
+	public void setIcon(Resource icon, int width, int height, int xOffset, int yOffset) {
+		icon_w = width;
+		icon_h = height;
+		icon_ox = xOffset;
+		icon_oy = yOffset;
+		setIcon(icon); // also calls requestRepaint()		
+	}
+	
 	public void paintContent(PaintTarget target) throws PaintException {
 		target.addAttribute("lon", lon);
 		target.addAttribute("lat", lat);
@@ -68,6 +77,11 @@ public class Marker extends AbstractComponent {
 		if(getIcon() != null && icon_h != 0 && icon_w != 0) {
 			target.addAttribute("icon_w", icon_w);
 			target.addAttribute("icon_h", icon_h);
+			if(icon_ox != Integer.MIN_VALUE && icon_oy != Integer.MIN_VALUE)
+			{
+				target.addAttribute("icon_ox", icon_ox);
+				target.addAttribute("icon_oy", icon_oy);
+			}
 		}
 	}
 
