@@ -12,4 +12,8 @@ public class Icon extends JavaScriptObject {
 		return new $wnd.OpenLayers.Icon(url, size);
 	}-*/;
 
+	public static native Icon create(String url, Size size, Pixel offset)
+	/*-{
+		return new $wnd.OpenLayers.Icon(url, size, offset);
+	}-*/;	
 }
