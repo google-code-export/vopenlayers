@@ -409,6 +409,10 @@ public class Style {
         setProperty("label", label);
     }
 
+    public String getLabel() {
+        return (String) getProperty("label");
+    }
+
     public void setLabelByAttribute(String label) {
         setPropertyByAttribute("label", label);
     }
