@@ -25,7 +25,8 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 	private String format = "image/jpeg";
 	private String projection;
 	private String styles;
-
+	private String viewparams = null;
+	
 	public WebMapServiceLayer() {
 
 	}
@@ -50,6 +51,9 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
 		}
 		if(styles != null) {
 			target.addAttribute("styles", styles);
+		}
+		if(viewparams != null) {
+		   	target.addAttribute("viewparams", viewparams);
 		}
 	}
 
@@ -180,6 +184,15 @@ public class WebMapServiceLayer extends AbstractLayerBase implements Layer {
     public void setSingleTile(Boolean isSingleTile) {
         this.isSingleTile = isSingleTile;
     }
+
+    public String getViewparams()
+    {
+       return viewparams;
+    }
 	
-	
+    public void setViewparams(String viewparams)
+    {
+      this.viewparams = viewparams;
+      requestRepaint();
+    }
 }

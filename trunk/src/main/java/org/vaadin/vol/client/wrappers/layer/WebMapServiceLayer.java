@@ -8,7 +8,7 @@ public class WebMapServiceLayer extends Layer {
     public native final static WebMapServiceLayer create(String display,
             String url, String layers, String format, String cqlFilter, String styles,
             boolean isBaseLayer, boolean transparent, double opacity,
-            boolean singleTile, String projection)
+            boolean singleTile, String projection, String viewparams)
     /*-{
     	var params = {};
     	if(layers) params.layers = layers;
@@ -21,7 +21,8 @@ public class WebMapServiceLayer extends Layer {
     	options.isBaseLayer = isBaseLayer;
     	options.opacity = opacity;
     	options.singleTile = singleTile;
-
+	if(viewparams) params.viewparams = viewparams;
+	
     	return new $wnd.OpenLayers.Layer.WMS(display, url, params, options);
     }-*/;
 }

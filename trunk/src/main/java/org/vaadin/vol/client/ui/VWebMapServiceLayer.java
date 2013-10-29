@@ -18,12 +18,13 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
     private String cqlFilter;
     private String projection;
     private String styles;
-
+    private String viewparams;
+    
     @Override
     WebMapServiceLayer createLayer() {
 	return WebMapServiceLayer.create(display, uri, layers, format,
 		cqlFilter, styles, isBaseLayer, transparent, opacity, isSingleTile,
-		projection);
+		projection, viewparams);
     }
 
     @Override
@@ -43,6 +44,8 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
                     .getStringAttribute("projection") : null;
             styles = uidl.hasAttribute("styles") ? uidl
                     .getStringAttribute("styles") : null;
+            viewparams = uidl.hasAttribute("viewparams") ? uidl
+        	    .getStringAttribute("viewparams") : null;
         }
         super.updateFromUIDL(uidl, client);
     }
@@ -83,5 +86,9 @@ public class VWebMapServiceLayer extends VAbstracMapLayer<WebMapServiceLayer> {
 		return styles;
 	}
     
+    public String getViewparams()
+    {
+	return viewparams;
+    }
     
 }
