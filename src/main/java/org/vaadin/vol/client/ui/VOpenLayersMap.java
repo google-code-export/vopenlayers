@@ -1,5 +1,26 @@
 package org.vaadin.vol.client.ui;
 
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.RenderSpace;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.Util;
+import com.vaadin.client.VConsole;
+import com.vaadin.client.ui.Action;
+import com.vaadin.client.ui.ActionOwner;
+import com.vaadin.client.ui.TreeAction;
+import com.vaadin.client.ui.VLazyExecutor;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,33 +36,11 @@ import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.control.Control;
 import org.vaadin.vol.client.wrappers.layer.Layer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.WidgetCollection;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Container;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.RenderSpace;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.Util;
-import com.vaadin.terminal.gwt.client.VConsole;
-import com.vaadin.terminal.gwt.client.ui.Action;
-import com.vaadin.terminal.gwt.client.ui.ActionOwner;
-import com.vaadin.terminal.gwt.client.ui.TreeAction;
-import com.vaadin.terminal.gwt.client.ui.VLazyExecutor;
-
 /**
  * Client side widget which communicates with the server. Messages from the
  * server are shown as HTML and mouse clicks are sent to the server.
  */
-public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner {
+public class VOpenLayersMap extends FlowPanel implements ActionOwner {//Container {
 
     /** Set the CSS class name to allow styling. */
     public static final String CLASSNAME = "v-openlayersmap";
@@ -169,7 +168,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             extentChangeListener = new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
-                    
+
                     int zoom = map.getZoom();
                     client.updateVariable(paintableId, "zoom", zoom, false);
                     Bounds extent = map.getExtent();
@@ -198,19 +197,20 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                 public void onEvent(JsArray arguments) {
                     Layer baseLayer = map.getBaseLayer();
                     for (Widget widget : components.values()) {
-						if (widget instanceof VLayer) {
-							VLayer vlayer = (VLayer) widget;
-							if( baseLayer == vlayer.getLayer()) {
-			                    client.updateVariable(paintableId, "baseLayer", vlayer, true);
-								return;
-							}
-						}
-					}
+                        if (widget instanceof VLayer) {
+                            VLayer vlayer = (VLayer) widget;
+                            if( baseLayer == vlayer.getLayer()) {
+                                /* BROKEN!!!
+                                client.updateVariable(paintableId, "baseLayer", vlayer, true);*/
+                                return;
+                            }
+                        }
+                    }
                 }
             };
             getMap().registerEventHandler("changebaselayer", changeBaseLayer);
         }
-        
+
         // if (clickListener == null) {
         if (client.hasEventListeners(this, "click")) {
             if (clickListener == null) {
@@ -244,8 +244,8 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                 };
                 getMap().registerEventHandler("click", clickListener);
             }
-            
-           
+
+
         } else {
             // TODO : HOW WILL WE UNREGISTER EVENTHANDLER ???
         }
@@ -269,12 +269,13 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
                     continue;
                 }
                 orphanedcomponents.remove(layerUidl.getId());
-                Paintable paintable = client.getPaintable(layerUidl);
+                ComponentConnector paintable = client.getPaintable(layerUidl);
                 if (!components.containsKey(layerUidl.getId())) {
                     components.put(layerUidl.getId(), (Widget) paintable);
                     fakePaintables.add((Widget) paintable);
                 }
-                paintable.updateFromUIDL(layerUidl, client);
+                /* BROKEN!!!
+                paintable.updateFromUIDL(layerUidl, client);*/
 
             }
         }
@@ -310,7 +311,7 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             VLayer baseLayer = (VLayer) uidl.getPaintableAttribute("baseLayer", client);
             getMap().setBaseLayer(baseLayer.getLayer());
         }
-        
+
         updateActionMap(uidl);
     }
 
@@ -480,19 +481,19 @@ public class VOpenLayersMap extends FlowPanel implements Container, ActionOwner 
             com.google.gwt.dom.client.Element elementById) {
         add(paintable, (Element) elementById.cast());
     }
-    
+
     VLazyExecutor resizeMap = new VLazyExecutor(300, new ScheduledCommand() {
         public void execute() {
             map.updateSize();
         }
     });
-    
+
     @Override
     public void setWidth(String width) {
         super.setWidth(width);
         resizeMap.trigger();
     }
-    
+
     @Override
     public void setHeight(String height) {
         super.setHeight(height);

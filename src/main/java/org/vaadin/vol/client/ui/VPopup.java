@@ -1,5 +1,17 @@
 package org.vaadin.vol.client.ui;
 
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.ComponentConnector;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.ServerConnector;
+import com.vaadin.client.UIDL;
+
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.LonLat;
 import org.vaadin.vol.client.wrappers.Map;
@@ -12,16 +24,6 @@ import org.vaadin.vol.client.wrappers.popup.PopupAnchoredBubble;
 import org.vaadin.vol.client.wrappers.popup.PopupFramed;
 import org.vaadin.vol.client.wrappers.popup.PopupFramedCloud;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.UIDL;
-
 public class VPopup extends Widget implements Paintable {
 
     private enum PopupStyle {
@@ -33,11 +35,14 @@ public class VPopup extends Widget implements Paintable {
         @SuppressWarnings("rawtypes")
         public void onEvent(JsArray arguments) {
             popup.hide();
+            /*
+            BROKEN!!!
             client.updateVariable(client.getPid(VPopup.this), "close", "", true);
+            */
         }
     };
     private ApplicationConnection client;
-    private Paintable paintable;
+    private ComponentConnector paintable;
 
     public VPopup() {
         setElement(Document.get().createDivElement());
@@ -45,7 +50,7 @@ public class VPopup extends Widget implements Paintable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
      * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
@@ -82,7 +87,7 @@ public class VPopup extends Widget implements Paintable {
         // TODO remove marker dependency
         Marker anchor = null;
         if (childUIDL.hasAttribute("anchor")) {
-            Paintable paintableAttribute = childUIDL.getPaintableAttribute(
+            ServerConnector paintableAttribute = childUIDL.getPaintableAttribute(
                     "anchor", client);
             if (paintableAttribute != null) {
                 VMarker vanchor = (VMarker) paintableAttribute;
@@ -127,7 +132,9 @@ public class VPopup extends Widget implements Paintable {
                 VOpenLayersMap parent2 = (VOpenLayersMap) getParent()
                         .getParent();
                 parent2.attachSpecialWidget((Widget) paintable, elementById);
-                paintable.updateFromUIDL(childUIDL.getChildUIDL(0), client);
+                /*
+                BROKEN!!!
+                paintable.updateFromUIDL(childUIDL.getChildUIDL(0), client);*/
                 int offsetHeight = ((Widget) paintable).getOffsetHeight();
                 int offsetWidth = ((Widget) paintable).getOffsetWidth();
                 popup.setSize(Size.create(offsetWidth, offsetHeight));

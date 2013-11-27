@@ -1,31 +1,22 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VBingMapLayer;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ClientWidget;
+import org.vaadin.vol.client.BingMapLayerState;
 
 /**
  * BingMap layer that can be added to {@link OpenLayersMap}. Require API key
  * from bingmapportal.com
- * 
+ *
  * <p>
  * Note that no settings can be changed after the layer has been drawn for the
  * first time.
  */
-@ClientWidget(VBingMapLayer.class)
-public class BingMapLayer extends AbstractComponent implements Layer {
+public class BingMapLayer extends AbstractNamedLayer implements Layer {
+
     public enum Type {
         Road, Aerial, AerialWithLabels
         // , Birdseye, BirdseyeWithLabels
     }
 
-    private String apikey;
-    private String displayName;
-
-    private Type type = Type.Road;
 
     public BingMapLayer() {
     }
@@ -35,41 +26,33 @@ public class BingMapLayer extends AbstractComponent implements Layer {
     }
 
     @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        if (apikey == null) {
+    public BingMapLayerState getState() {
+        return BingMapLayerState.class.cast(super.getState());
+    }
+
+    @Override
+    public void beforeClientResponse(boolean initial) {
+        super.beforeClientResponse(initial);
+
+        if (this.getState().apikey == null) {
             throw new IllegalStateException("Bing maps API key must be set!");
         }
-        super.paintContent(target);
-
-        if (displayName != null) {
-            target.addAttribute("name", displayName);
-        }
-        target.addAttribute("apikey", apikey);
-        target.addAttribute("type", getType().toString());
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     public void setApikey(String apikey) {
-        this.apikey = apikey;
+        this.getState().apikey = apikey;
     }
 
     public String getApikey() {
-        return apikey;
+        return this.getState().apikey;
     }
 
     public void setType(Type t) {
-        type = t;
+        this.getState().type = t.toString();
     }
 
     public Type getType() {
-        return type;
+        return Type.valueOf(this.getState().type);
     }
 
 }

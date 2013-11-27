@@ -1,9 +1,9 @@
 package org.vaadin.vol.client.ui;
 
-import org.vaadin.vol.client.wrappers.layer.XYZLayer;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
 
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
+import org.vaadin.vol.client.wrappers.layer.XYZLayer;
 
 public class VXYZLayer extends VAbstracMapLayer<XYZLayer> {
 

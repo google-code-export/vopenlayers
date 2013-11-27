@@ -1,5 +1,9 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
+
 import org.vaadin.vol.Area;
 import org.vaadin.vol.Attributes;
 import org.vaadin.vol.Bounds;
@@ -14,10 +18,6 @@ import org.vaadin.vol.Style;
 import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.Symbolizer;
 import org.vaadin.vol.VectorLayer;
-
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 public class StyleMapAddUniqueValueRules extends AbstractVOLTest {
@@ -148,10 +148,8 @@ public class StyleMapAddUniqueValueRules extends AbstractVOLTest {
         symbolizer_lookup.setProperty("size2", symb);
         // symbolizer_lookup.setProperty("2", symb);
 
-        stylemap.addUniqueValueRules(new RenderIntent("red"), "size",
-                symbolizer_lookup, null);
-        stylemap.addUniqueValueRules(new RenderIntent("marker"), "size",
-                symbolizer_lookup, null);
+        stylemap.addUniqueValueRules(new RenderIntent("red"), "size", symbolizer_lookup);
+        stylemap.addUniqueValueRules(new RenderIntent("marker"), "size", symbolizer_lookup);
 
         for (int i = 0; i < points.length; i++) {
             PointVector pointVector = new PointVector(points[i].getLon(),
@@ -194,7 +192,7 @@ public class StyleMapAddUniqueValueRules extends AbstractVOLTest {
 
     /**
      * An example how to zoom the map so that it covers given points.
-     * 
+     *
      * @param map
      * @param points
      */

@@ -1,5 +1,7 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.ui.Component;
+
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedEvent;
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.BeforeFeatureSelectedListener;
 import org.vaadin.vol.LabelVector;
@@ -11,8 +13,6 @@ import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.WebFeatureServiceLayer;
 
-import com.vaadin.ui.Component;
-
 /**
  * Loads different feature types from a wfs use beforefeature select event
  * to show messages.
@@ -20,7 +20,7 @@ import com.vaadin.ui.Component;
 public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
 
     @Override
-    public String getDescription() {    	
+    public String getDescription() {
         return "Just another WFS example. Shows reclickable feature, and btw you can click on all layers :-D";
     }
 
@@ -59,7 +59,7 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
         osmLayer.setUrl("http://b.tile.openstreetmap.org/${z}/${x}/${y}.png");
         osmLayer.setDisplayName("OSM");
 
-        String proxyUrl = getApplication().getURL()
+        String proxyUrl = getUI().getPage().getLocation()
                 + "../WFSPROXY/demo.opengeo.org/geoserver/wfs";
 
         WebFeatureServiceLayer wfsCities = createWfsLayer("Cities", proxyUrl,
@@ -100,13 +100,13 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
                 return false;
             }
         });
-        
+
         openLayersMap.addLayer(osmLayer);
         openLayersMap.addLayer(wfsCities);
         openLayersMap.addLayer(wfsRoads);
         openLayersMap.addLayer(wfsWater);
         openLayersMap.addLayer(wfsBoundaries);
-        
+
         // add a comment
         VectorLayer vectorLayer = new VectorLayer();
         vectorLayer.setDisplayName("Comments");
@@ -115,8 +115,8 @@ public class WebFeatureServiceLayerTest2 extends AbstractVOLTest {
         labelVector.setPoints(new Point(147, -44.5429));
         vectorLayer.addVector(labelVector);
         openLayersMap.addLayer(vectorLayer);
-        
-        
+
+
         openLayersMap.setSizeFull();
 
         openLayersMap.setCenter(146.9417, -42.0429);

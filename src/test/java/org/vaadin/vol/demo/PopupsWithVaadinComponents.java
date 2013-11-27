@@ -1,17 +1,17 @@
 package org.vaadin.vol.demo;
 
-import org.vaadin.vol.OpenLayersMap;
-import org.vaadin.vol.OpenStreetMapLayer;
-import org.vaadin.vol.Popup;
-import org.vaadin.vol.Popup.PopupStyle;
-
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.Button.ClickEvent;
+
+import org.vaadin.vol.OpenLayersMap;
+import org.vaadin.vol.OpenStreetMapLayer;
+import org.vaadin.vol.Popup;
+import org.vaadin.vol.Popup.PopupStyle;
 
 public class PopupsWithVaadinComponents extends AbstractVOLTest {
 
@@ -30,7 +30,7 @@ public class PopupsWithVaadinComponents extends AbstractVOLTest {
         popup.setPopupStyle(PopupStyle.FRAMED_CLOUD);
         popup.setClosable(false);
         map.addPopup(popup);
-        
+
         Popup popup2 = new Popup();
         CssLayout cssLayout = new CssLayout();
         popup2.setLon(30);
@@ -40,16 +40,16 @@ public class PopupsWithVaadinComponents extends AbstractVOLTest {
         Button c = new Button("Vaadin button");
         c.addListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                getWindow().showNotification("Use any vaadin stuff here like in a window");
+                getUI().showNotification("Use any vaadin stuff here like in a window");
             }
         });
-        
+
         cssLayout.addComponent(c);
         map.addPopup(popup2);
- 
+
         popup2 = new Popup();
         popup2.setLat(30);
-        
+
         Table table = new Table();
         table.setWidth("200px");
         table.setHeight("100px");
@@ -59,9 +59,9 @@ public class PopupsWithVaadinComponents extends AbstractVOLTest {
             table.addItem();
         }
         popup2.setContent(table);
-        
+
         map.addPopup(popup2);
- 
+
 
         return map;
     }

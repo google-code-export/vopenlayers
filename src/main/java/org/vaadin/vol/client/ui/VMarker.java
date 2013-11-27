@@ -3,8 +3,8 @@ package org.vaadin.vol.client.ui;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
 
 import org.vaadin.vol.client.wrappers.GwtOlHandler;
 import org.vaadin.vol.client.wrappers.Icon;
@@ -85,8 +85,9 @@ public class VMarker extends Widget implements VMarkable {
             this.marker.addClickHandler(new GwtOlHandler() {
                 @SuppressWarnings("rawtypes")
                 public void onEvent(JsArray arguments) {
+                    /* BROKEN!!!
                     client.updateVariable(client.getPid(paintable), "click",
-                            "", true);
+                            "", true);*/
                 }
             });
         }
@@ -101,9 +102,9 @@ public class VMarker extends Widget implements VMarkable {
             int height = childUIDL.hasAttribute("icon_h") ? childUIDL
                     .getIntAttribute("icon_h") : 32;
             if(childUIDL.hasAttribute("icon_ox") && childUIDL.hasAttribute("icon_oy")) {
-            	return Icon.create(url, Size.create(width, height), 
-            			Pixel.create(childUIDL.getIntAttribute("icon_ox"),
-            					childUIDL.getIntAttribute("icon_oy")));
+                return Icon.create(url, Size.create(width, height),
+                        Pixel.create(childUIDL.getIntAttribute("icon_ox"),
+                                childUIDL.getIntAttribute("icon_oy")));
             }
             return Icon.create(url, Size.create(width, height));
         }

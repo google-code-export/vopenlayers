@@ -3,17 +3,12 @@ package org.vaadin.vol;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.vaadin.vol.client.Costants;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-
 /**
  * StyleMaps are collections of Styles (aka renderer intents). Styles are mapped
  * with unique style names (aka render intent). The actual style that is used to
  * render a vector depends on the state (e.g. 'selected', 'temporary') and
  * possibly overridden style name in the vector.
- * 
+ *
  */
 public class StyleMap implements Serializable {
 
@@ -55,7 +50,7 @@ public class StyleMap implements Serializable {
      * <p>
      * Avoid passing null for one of the styles. If just want to use 2 style,
      * pass the same style for selectStyle and tempraryStyle parameters.
-     * 
+     *
      * @param defaultStyle
      *            the default style to render the feature
      * @param selectStyle
@@ -76,7 +71,7 @@ public class StyleMap implements Serializable {
     public StyleMap() {
     }
 
-    public void paint(PaintTarget target) throws PaintException {
+    /*public void paint(PaintTarget target) throws PaintException {
         String[] intents = styles.keySet().toArray(
                 new String[styles.size() + (extendDefault ? 1 : 0)]);
         if (extendDefault) {
@@ -125,7 +120,7 @@ public class StyleMap implements Serializable {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * @param extendDefault
@@ -145,24 +140,21 @@ public class StyleMap implements Serializable {
      *            specifies the desired intent - usually 'default'
      * @param property
      *            specifies the property of the feature to check
-     * @param symbolizer_lookup
+     * @param lookup
      *            specifies the JSON object containing the key:value pairs to
      *            use if the rule match
-     * @param context
-     *            optional object to check the property against. If no context
-     *            is passed in, feature attributes are used by default
-     * 
+     *
      */
     public void addUniqueValueRules(RenderIntent intent, String property,
-            Symbolizer lookup, Object context) {
-        // reset the rules setting property or simbolozer_lookup to null or
+            Symbolizer lookup) {
+        // reset the rules setting property or symbolizer_lookup to null or
         // empty
         //
 
         if ((property != null) && (lookup != null)) {
             if (!("".equals(property)) && (lookup.size() > 0)) {
                 UniqueValueRule uvr = new UniqueValueRule(intent, property,
-                        lookup, context);
+                        lookup);
                 uniqueValueRules.put(intent.getValue(), uvr);
             }
         } else {
@@ -175,47 +167,29 @@ public class StyleMap implements Serializable {
 /**
  * UniqueValueRule class is a wrapper class used to store the the parameter of
  * addUniqueValueRules
- * 
+ *
  */
-class UniqueValueRule {
+class UniqueValueRule implements Serializable {
     RenderIntent intent;
     String property;
     Symbolizer lookup;
-    Object context;
 
     public UniqueValueRule(RenderIntent intent, String property,
-            Symbolizer lookup, Object context) {
+            Symbolizer lookup) {
         this.intent = intent;
         this.property = property;
         this.lookup = lookup;
-        this.context = context;
     }
 
-    /**
-     * @return the intent
-     */
     public RenderIntent getIntent() {
         return intent;
     }
 
-    /**
-     * @return the property
-     */
     public String getProperty() {
         return property;
     }
 
-    /**
-     * @return the lookup
-     */
     public Symbolizer getLookup() {
         return lookup;
-    }
-
-    /**
-     * @return the context
-     */
-    public Object getContext() {
-        return context;
     }
 }

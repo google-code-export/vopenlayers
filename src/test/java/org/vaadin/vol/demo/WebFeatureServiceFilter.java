@@ -2,36 +2,37 @@ package org.vaadin.vol.demo;
 
 
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.ui.AbstractSelect.Filtering;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
+
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.Style;
 import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.WebFeatureServiceLayer;
 import org.vaadin.vol.WebMapServiceLayer;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.ui.AbstractSelect.Filtering;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
-
 public class WebFeatureServiceFilter extends AbstractVOLTest {
 
     @Override
-    public String getDescription() {    	
+    public String getDescription() {
         return "Dynamic filter for WFS layer";
     }
 
-	private HorizontalLayout controls;
-	private com.vaadin.ui.ComboBox filterCombo;
-    
-    
+    private HorizontalLayout controls;
+    private com.vaadin.ui.ComboBox filterCombo;
+
+
     @Override
     protected void setup() {
         super.setup();
         ((VerticalLayout) getContent()).addComponentAsFirst(controls);
     }
-    
+
     private WebFeatureServiceLayer createWfsLayer(String displayName,
             String proxyUrl, String featureType) {
         WebFeatureServiceLayer wfsLayer = new WebFeatureServiceLayer();
@@ -58,7 +59,7 @@ public class WebFeatureServiceFilter extends AbstractVOLTest {
         wfs.setStyleMap(styleMap);
 
     }
-    
+
     @Override
     Component getMap() {
         OpenLayersMap openLayersMap = new OpenLayersMap();
@@ -68,23 +69,23 @@ public class WebFeatureServiceFilter extends AbstractVOLTest {
         webMapServiceLayer.setDisplayName("Base map");
         openLayersMap.addLayer(webMapServiceLayer);
 
-        String proxyUrl = getApplication().getURL()
+        String proxyUrl = getUI().getPage().getLocation()
                 + "../WFSPROXY/demo.opengeo.org/geoserver/wfs";
-        
+
         final WebFeatureServiceLayer wfsRoads = createWfsLayer("Roads", proxyUrl,
 //                "tasmania_water_bodies"/*"tasmania_roads"*/);
-                "tasmania_roads");        		
+                "tasmania_roads");
         setStyle(wfsRoads, 1, "orange", "orange", 0, 4);
 
         wfsRoads.setFilter("==","TYPE","road");
-        
+
         openLayersMap.addLayer(wfsRoads);
-        
+
         openLayersMap.setSizeFull();
 
         openLayersMap.setCenter(146.9417, -42.0429);
         openLayersMap.setZoom(7);
-        
+
         controls = new HorizontalLayout();
 
         filterCombo = new com.vaadin.ui.ComboBox();
@@ -94,19 +95,19 @@ public class WebFeatureServiceFilter extends AbstractVOLTest {
         filterCombo.addItem("road");
         filterCombo.addItem("highway");
         filterCombo.select("road");
-        filterCombo.addListener(new Property.ValueChangeListener() {			
-			public void valueChange(ValueChangeEvent event) {				
-				String s=(String)event.getProperty().getValue();
-				if (s.equals("highway") || s.equals("road"))
-					wfsRoads.setFilterAndRefresh("==","TYPE",s);
-				else if (s.equals("all"))
-					wfsRoads.setFilterAndRefresh("==","TYPE","");
-			}
-		});
-        
-        addComponent(filterCombo);        
+        filterCombo.addListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                String s=(String)event.getProperty().getValue();
+                if (s.equals("highway") || s.equals("road"))
+                    wfsRoads.setFilterAndRefresh("==","TYPE",s);
+                else if (s.equals("all"))
+                    wfsRoads.setFilterAndRefresh("==","TYPE","");
+            }
+        });
+
+        ((ComponentContainer)getContent()).addComponent(filterCombo);
         controls.addComponent(filterCombo);
-        
+
         return openLayersMap;
     }
 }

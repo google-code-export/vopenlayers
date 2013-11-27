@@ -1,5 +1,7 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.ui.Component;
+
 import java.util.Date;
 
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedEvent;
@@ -8,8 +10,6 @@ import org.vaadin.vol.AbstractLayerBase.LoadEndEvent;
 import org.vaadin.vol.AbstractLayerBase.LoadEndListener;
 import org.vaadin.vol.AbstractLayerBase.LoadStartEvent;
 import org.vaadin.vol.AbstractLayerBase.LoadStartListener;
-import org.vaadin.vol.demo.EventsOSMandWFSLayer.LoadEndListenerImpl;
-import org.vaadin.vol.demo.EventsOSMandWFSLayer.LoadStartListenerImpl;
 import org.vaadin.vol.Bounds;
 import org.vaadin.vol.OpenLayersMap;
 import org.vaadin.vol.Point;
@@ -18,24 +18,21 @@ import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.WebFeatureServiceLayer;
 import org.vaadin.vol.WebMapServiceLayer;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-
 /**
  * http://openlayers.org/dev/examples/wfs-states.js
  */
 public class EventsWebMapServiceLayer extends AbstractVOLTest {
-	
-	long loadTime;
-	private LoadStartListener loadStartListener=new LoadStartListenerImpl();
-	private LoadEndListener loadEndListener=new LoadEndListenerImpl();
-	
+
+    long loadTime;
+    private LoadStartListener loadStartListener=new LoadStartListenerImpl();
+    private LoadEndListener loadEndListener=new LoadEndListenerImpl();
+
     @Override
     public String getDescription() {
         return "Layer events for WebMapServiceLayer";
     }
-    
-    
+
+
 
     @Override
     Component getMap() {
@@ -62,7 +59,7 @@ public class EventsWebMapServiceLayer extends AbstractVOLTest {
         });
 
         // proxied to http://demo.opengeo.org/geoserver/wfs
-        webFeatureServiceLayer.setUri(getApplication().getURL()
+        webFeatureServiceLayer.setUri(getUI().getPage().getLocation()
                 + "../WFSPROXY/");
         webFeatureServiceLayer.setFeatureType("states");
         webFeatureServiceLayer.setFeatureNS("http://www.openplans.org/topp");
@@ -91,16 +88,16 @@ public class EventsWebMapServiceLayer extends AbstractVOLTest {
     }
 
     class LoadStartListenerImpl implements LoadStartListener {
-    	public void loadStart(LoadStartEvent event) {
-    		loadTime=new Date().getTime();
-    	};
+        public void loadStart(LoadStartEvent event) {
+            loadTime=new Date().getTime();
+        };
     }
     class LoadEndListenerImpl implements LoadEndListener {
-    	public void loadEnd(LoadEndEvent event) {
-    		long endTime=new Date().getTime();
-    		long timeToLoad=endTime-loadTime;
-    		showNotification("Time to load [ms]: "+timeToLoad);
-    	};
+        public void loadEnd(LoadEndEvent event) {
+            long endTime=new Date().getTime();
+            long timeToLoad=endTime-loadTime;
+            showNotification("Time to load [ms]: "+timeToLoad);
+        };
     }
-    
+
 }

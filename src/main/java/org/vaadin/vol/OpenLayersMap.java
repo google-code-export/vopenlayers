@@ -1,24 +1,27 @@
 package org.vaadin.vol;
 
 import com.vaadin.event.Action;
-import com.vaadin.terminal.KeyMapper;
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.tools.ReflectTools;
+import com.vaadin.server.KeyMapper;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Server side component for the VOpenLayersMap widget.
  */
 
 @SuppressWarnings("serial")
-@com.vaadin.ui.ClientWidget(org.vaadin.vol.client.ui.VOpenLayersMap.class)
-public class OpenLayersMap extends AbstractComponentContainer implements
-        Action.Container {
+public class OpenLayersMap extends AbstractComponentContainer implements Action.Container {
 
     private final Set<Action.Handler> actionHandlers = new LinkedHashSet<Action.Handler>();
     private final KeyMapper actionMapper = new KeyMapper();
@@ -27,7 +30,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     private double centerLat = 0;
     private int zoom = 3;
     private boolean partialRepaint;
-    
+
     private Layer baseLayer;
 
     private HashSet<Control> controls = new HashSet<Control>(Arrays.asList(
@@ -101,14 +104,14 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         layers.add(c);
     }
 
-    
+
     /**
      * Change the base layer of the map.
      * <p>
      * Note that once the change has been made client-side, a BaseLayerChangeEvent will be fired server-side, and the name of
      * the new base layer will be available from getBaseLayerName().
      * @param newBaseLayer      the layer that will be the new base layer
-     * @throws IllegalArgumentException If the layer is not already associated with the map and/or the layer is not a base layer.                  
+     * @throws IllegalArgumentException If the layer is not already associated with the map and/or the layer is not a base layer.
      */
     public void setBaseLayer(Layer newBaseLayer) {
         // Need to add a check to make sure the newBaseLayer is in fact a base layer....API needs more work for that
@@ -117,20 +120,20 @@ public class OpenLayersMap extends AbstractComponentContainer implements
             baseLayer = newBaseLayer;
             setDirty("baseLayer");
        } else {
-            throw new IllegalArgumentException("Only existing map layers can become the base layer");               
+            throw new IllegalArgumentException("Only existing map layers can become the base layer");
        }
     }
-    
+
     /**
      * Get the name (display name) of the current base layer
-     * 
-     * @return Current base layer name.  
+     *
+     * @return Current base layer name.
      */
     public Layer getBaseLayer() {
         return baseLayer;
     }
-    
-    public void setCenter(double lon, double lat) {  
+
+    public void setCenter(double lon, double lat) {
         centerLat = lat;
         centerLon = lon;
         setDirty("clat");
@@ -203,10 +206,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         }
     }
 
-    @Override
+    /*@Override
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
-        
+
         if (isDirty("projection") && projection != null) {
             target.addAttribute("projection", projection);
         }
@@ -239,7 +242,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         if (isDirty("controls")) {
             target.addAttribute("controls", controls.toArray());
         }
-        
+
         if (isDirty("baseLayer") && baseLayer != null) {
             target.addAttribute("baseLayer", baseLayer);
         }
@@ -250,11 +253,11 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         fullRepaint = false;
     }
 
-    /**
+    *//**
      * Receive and handle events and other variable changes from the client.
      *
      * {@inheritDoc}
-     */
+     *//*
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);
@@ -264,10 +267,10 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         }
 
         if (variables.containsKey("baseLayer")) {
-        	
+
             updateBaseLayer((Layer) variables.get("baseLayer"));
         }
-        
+
         // Actions
         if (variables.containsKey("action")) {
             String string = (String) variables.get("action");
@@ -304,16 +307,15 @@ public class OpenLayersMap extends AbstractComponentContainer implements
             pointInformation.setBounds(getExtend());
             mapClicked(pointInformation);
         }
-    }
+    }*/
 
     protected void updateBaseLayer(Layer baseLayer) {
         this.baseLayer = baseLayer;
         fireEvent(new BaseLayerChangeEvent());
     }
-    
+
     protected void updateExtent(Map<String, Object> variables) {
-        int zoom = (Integer) variables.get("zoom");
-        this.zoom = zoom;
+        this.zoom = (Integer) variables.get("zoom");
         top = (Double) variables.get("top");
         right = (Double) variables.get("right");
         bottom = (Double) variables.get("bottom");
@@ -338,8 +340,9 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         throw new UnsupportedOperationException();
     }
 
-    public Iterator<Component> getComponentIterator() {
-        return new LinkedList<Component>(layers).iterator();
+    @Override
+    public int getComponentCount() {
+        return layers.size();
     }
 
     public void addPopup(Popup popup) {
@@ -352,13 +355,13 @@ public class OpenLayersMap extends AbstractComponentContainer implements
             clearPartialPaintFlags();
             fullRepaint = true;
         }
-        super.requestRepaint();
+        super.markAsDirty();
     }
 
     private void partialPaint() {
         partialRepaint = true;
         try {
-            requestRepaint();
+            markAsDirty();
         } finally {
             partialRepaint = false;
         }
@@ -490,7 +493,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         return resolutions;
     }
 
-    private void paintActions(PaintTarget target, final Set<Action> actionSet)
+    /*private void paintActions(PaintTarget target, final Set<Action> actionSet)
             throws PaintException {
         if (!actionSet.isEmpty()) {
             target.addVariable(this, "action", "");
@@ -528,7 +531,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
             target.addAttribute("alb", keys.toArray());
         }
         return actionSet;
-    }
+    }*/
 
     /**
      * Registers a new action handler for this container
@@ -539,7 +542,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         if (actionHandler != null) {
             if (!actionHandlers.contains(actionHandler)) {
                 actionHandlers.add(actionHandler);
-                requestRepaint();
+                markAsDirty();
             }
         }
     }
@@ -553,7 +556,7 @@ public class OpenLayersMap extends AbstractComponentContainer implements
     public void removeActionHandler(Action.Handler actionHandler) {
         if (actionHandlers != null && actionHandlers.contains(actionHandler)) {
             actionHandlers.remove(actionHandler);
-            requestRepaint();
+            markAsDirty();
         }
     }
 
@@ -566,22 +569,35 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         fireEvent(mapClickEvent);
     }
 
+    @Override
+    public Iterator<Component> iterator() {
+        return new LinkedList<Component>(layers).iterator();
+    }
+
     public interface MapClickListener {
 
         public static final Method method = ReflectTools.findMethod(
-                MapClickListener.class, "mapClicked", MapClickEvent.class);
+          MapClickListener.class, "mapClicked", MapClickEvent.class);
 
         public void mapClicked(MapClickEvent event);
 
     }
 
-    public void addListener(MapClickListener listener) {
+    public void addMapClickListener(MapClickListener listener) {
         addListener("click", MapClickEvent.class, listener,
                 MapClickListener.method);
     }
+    @Deprecated
+    public void addListener(MapClickListener listener) {
+        this.addMapClickListener(listener);
+    }
 
-    public void removeListener(MapClickListener listener) {
+    public void removeMapClickListener(MapClickListener listener) {
         removeListener("click", MapClickEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(MapClickListener listener) {
+        this.removeMapClickListener(listener);
     }
 
     public class MapClickEvent extends Event {
@@ -625,13 +641,21 @@ public class OpenLayersMap extends AbstractComponentContainer implements
 
     }
 
-    public void addListener(ExtentChangeListener listener) {
+    public void addExtentChangeListener(ExtentChangeListener listener) {
         addListener(ExtentChangeEvent.class, listener,
                 ExtentChangeListener.method);
     }
+    @Deprecated
+    public void addListener(ExtentChangeListener listener) {
+        this.addExtentChangeListener(listener);
+    }
 
-    public void removeListener(ExtentChangeListener listener) {
+    public void removeExtentChangeListener(ExtentChangeListener listener) {
         removeListener(ExtentChangeEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(ExtentChangeListener listener) {
+        this.removeExtentChangeListener(listener);
     }
 
     public class BaseLayerChangeEvent extends Event {
@@ -654,13 +678,21 @@ public class OpenLayersMap extends AbstractComponentContainer implements
         public void baseLayerChanged(BaseLayerChangeEvent event);
     }
 
-    public void addListener(BaseLayerChangeListener listener) {
+    public void addBaseLayerChangeListener(BaseLayerChangeListener listener) {
         addListener(BaseLayerChangeEvent.class, listener,
                 BaseLayerChangeListener.method);
     }
+    @Deprecated
+    public void addListener(BaseLayerChangeListener listener) {
+        this.addBaseLayerChangeListener(listener);
+    }
 
-    public void removeListener(BaseLayerChangeListener listener) {
+    public void removeBaseLayerChangeListener(BaseLayerChangeListener listener) {
         removeListener(BaseLayerChangeEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(BaseLayerChangeListener listener) {
+        this.removeBaseLayerChangeListener(listener);
     }
 
 }

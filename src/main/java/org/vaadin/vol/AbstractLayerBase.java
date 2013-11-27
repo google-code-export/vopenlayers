@@ -1,65 +1,85 @@
 package org.vaadin.vol;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.tools.ReflectTools;
-import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
-/*	
+import java.lang.reflect.Method;
+
+import org.vaadin.vol.client.LayerBaseState;
+
+/*
  * Layer base class to handle the basic layer events
- * 
+ *
  *  The move events currently not handled. They should handled in map.
  *  I don't implement listeners for add or remove layer because I found no
- *  practicle use case :-D
+ *  practical use case :-D
  */
-abstract public class AbstractLayerBase extends AbstractComponent {
-
-    private String attribution;
+abstract public class AbstractLayerBase extends AbstractProjectedLayer {
 
     /*
      * add a listener to layers 'loadstart' event
      */
-    public void addListener(LoadStartListener listener) {
+    public void addLoadStartListener(LoadStartListener listener) {
         addListener(LoadStartListener.EVENT_ID, LoadStartEvent.class, listener,
-                LoadStartListener.method);
+          LoadStartListener.method);
+    }
+    @Deprecated
+    public void addListener(LoadStartListener listener) {
+        this.addLoadStartListener(listener);
     }
 
-    public void removeListener(LoadStartListener listener) {
+    public void removeLoadStartListener(LoadStartListener listener) {
         removeListener(LoadStartListener.EVENT_ID, LoadStartEvent.class,
                 listener);
+    }
+    @Deprecated
+    public void removeListener(LoadStartListener listener) {
+        this.removeLoadStartListener(listener);
     }
 
     /*
      * add a listener to layers 'loadend' event
      */
-    public void addListener(LoadEndListener listener) {
+    public void addLoadEndListener(LoadEndListener listener) {
         addListener(LoadEndListener.EVENT_ID, LoadEndEvent.class, listener,
                 LoadEndListener.method);
     }
+    @Deprecated
+    public void addListener(LoadEndListener listener) {
+        this.addLoadEndListener(listener);
+    }
 
-    public void removeListener(LoadEndListener listener) {
+    public void removeLoadEndListener(LoadEndListener listener) {
         removeListener(LoadEndListener.EVENT_ID, LoadEndEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(LoadEndListener listener) {
+        this.removeLoadEndListener(listener);
     }
 
     /*
      * add a listener to layers 'visabilitychanged' event
      */
-    public void addListener(VisibilityChangedListener listener) {
+    public void addVisibilityChangeListener(VisibilityChangedListener listener) {
         addListener(VisibilityChangedListener.EVENT_ID,
                 VisibilityChangedEvent.class, listener,
                 VisibilityChangedListener.method);
     }
+    @Deprecated
+    public void addListener(VisibilityChangedListener listener) {
+        this.addVisibilityChangeListener(listener);
+    }
 
-    public void removeListener(VisibilityChangedListener listener) {
+    public void removeVisibilityChangedListener(VisibilityChangedListener listener) {
         removeListener(VisibilityChangedListener.EVENT_ID,
                 VisibilityChangedEvent.class, listener);
     }
+    @Deprecated
+    public void removeListener(VisibilityChangedListener listener) {
+        this.removeVisibilityChangedListener(listener);
+    }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);
@@ -77,34 +97,31 @@ abstract public class AbstractLayerBase extends AbstractComponent {
                     (Boolean) variables.get(LVIS));
             fireEvent(event);
         }
-    }
-    
+    }*/
+
     @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        if(attribution != null) {
-            target.addAttribute("attribution", attribution);
-        }
+    public LayerBaseState getState() {
+        return LayerBaseState.class.cast(super.getState());
     }
 
     public String getAttribution() {
-        return attribution;
+        return this.getState().attribution;
     }
 
     /**
      * Sets the attribution text for layer. Feature is not functional in all layers.
-     * 
+     *
      * @param attribution
      */
     public void setAttribution(String attribution) {
-        this.attribution = attribution;
+        this.getState().attribution = attribution;
     }
 
     public interface LoadStartListener {
         public final String EVENT_ID = "llstart";
 
         public final Method method = ReflectTools.findMethod(
-                LoadStartListener.class, "loadStart", LoadStartEvent.class);
+          LoadStartListener.class, "loadStart", LoadStartEvent.class);
 
         public void loadStart(LoadStartEvent event);
     }
@@ -156,12 +173,11 @@ abstract public class AbstractLayerBase extends AbstractComponent {
     public class VisibilityChangedEvent extends LayerBaseEvent {
         private boolean visible;
 
-        public VisibilityChangedEvent(Component source, String layerName,
-                Boolean visible) {
+        public VisibilityChangedEvent(Component source, String layerName, Boolean visible) {
             super(source, layerName);
 
             // false only in case visible variable not set
-            this.visible = visible != null ? visible.booleanValue() : false;
+            this.visible = visible != null && visible;
         }
 
         public boolean isVisible() {

@@ -1,27 +1,14 @@
 package org.vaadin.vol.demo;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import com.vaadin.Application;
 import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.DefaultItemSorter;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.ColumnGenerator;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.ResizeEvent;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.UI;
 
-public class VolApplication extends Application {
+public class VolApplication extends UI {
 
     private Container testClassess;
 
-    @Override
+    /*@Override
     public Window getWindow(String name) {
         Window window = super.getWindow(name);
         if (window == null && name != null && !"".equals(name)
@@ -135,7 +122,7 @@ public class VolApplication extends Application {
                 }
             }
         }
-        
+
         // sorting - start
         indexedContainer.setItemSorter(new DefaultItemSorter(new Comparator<Object>() {
             public int compare(Object o1, Object o2) {
@@ -147,7 +134,7 @@ public class VolApplication extends Application {
 
             }
         }));
-        
+
         String[] propertyIds={"name"};
         boolean[] ascending={true};
         indexedContainer.sort(propertyIds, ascending);
@@ -172,5 +159,9 @@ public class VolApplication extends Application {
                     newInstance.isSuitebleOnlineDemo());
         }
     }
+*/
+    @Override
+    protected void init(VaadinRequest request) {
 
+    }
 }

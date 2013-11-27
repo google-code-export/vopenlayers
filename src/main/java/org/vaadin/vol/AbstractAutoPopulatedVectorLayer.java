@@ -1,57 +1,27 @@
 package org.vaadin.vol;
 
+import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.vaadin.vol.VectorLayer.SelectionMode;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.tools.ReflectTools;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Component;
+import org.vaadin.vol.client.AutoPopulatedVectorLayerState;
 
 /**
  * An abstract implementation (based on client side vector layer) that populates
  * it content on the client side only. Server side only controls how it is
  * populated, styled and provides methods for selection features.
- * 
+ *
  */
-public abstract class AbstractAutoPopulatedVectorLayer extends
-        AbstractLayerBase {
-
-    private StyleMap stylemap;
-    private String projection;
-    private String displayName = "WFS";
-	private SelectionMode selectionMode;
-	
-	private boolean visibility;
-	private boolean visibilitySet=false; // maybe, should change to the setDirty
-										// way from org.vaadin.vol.OpenLayersMap
-	
-
-	// it's a really poor implementation but I don't unterstand the use of
-	// org.vaadin.vol.filter.Filter :-(
-	// If I got an idea how to pass such filter object to the client site I will
-	// change the code
-	private String filterValue;
-	private String filterProp;
-	private String filterType;
-	private boolean filterRefresh=false;
-	private boolean filterSet=false; // maybe, should change to the setDirty
-									// way from org.vaadin.vol.OpenLayersMap
-	
-	/**
-	 * this will be used to group vector layers to share the same SelectFeature
-	 * control 
-	 */
-	private String selectionCtrlId;
+public abstract class AbstractAutoPopulatedVectorLayer extends AbstractLayerBase {
 
     public AbstractAutoPopulatedVectorLayer() {
-        super();
+        this.getState().displayName = "WFS";
     }
-    
-    @SuppressWarnings("unchecked")
+
+    /*@SuppressWarnings("unchecked")
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);
@@ -62,57 +32,46 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         String sUnsel=(String)variables.get(FeatureUnSelectedListener.EVENT_ID);
         String sBefsel=(String)variables.get(BeforeFeatureSelectedListener.EVENT_ID);
         if (sSel!=null) {
-        	FeatureSelectedEvent featureSelectedEvent = 
-        			new FeatureSelectedEvent(this, fid, attr, wkt);
-        	fireEvent(featureSelectedEvent);
+            FeatureSelectedEvent featureSelectedEvent =
+                    new FeatureSelectedEvent(this, fid, attr, wkt);
+            fireEvent(featureSelectedEvent);
         }
         else if (sUnsel!=null) {
-        	FeatureUnSelectedEvent featureUnSelectedEvent = 
-        			new FeatureUnSelectedEvent(this, fid, attr, wkt);
-        	fireEvent(featureUnSelectedEvent);        	
+            FeatureUnSelectedEvent featureUnSelectedEvent =
+                    new FeatureUnSelectedEvent(this, fid, attr, wkt);
+            fireEvent(featureUnSelectedEvent);
         }
         else if (sBefsel!=null) {
-        	BeforeFeatureSelectedEvent beforeFeatureSelectedEvent = 
-        			new BeforeFeatureSelectedEvent(this, fid, attr, wkt);
-        	fireEvent(beforeFeatureSelectedEvent);        	
+            BeforeFeatureSelectedEvent beforeFeatureSelectedEvent =
+                    new BeforeFeatureSelectedEvent(this, fid, attr, wkt);
+            fireEvent(beforeFeatureSelectedEvent);
         }
-    }
+    }*/
 
-
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        super.paintContent(target);
-        target.addAttribute("display", displayName);
-        if (projection != null) {
-            target.addAttribute("projection", projection);
-        }
-        if (selectionCtrlId!=null) {
-        	target.addAttribute("selectionCtrlId",selectionCtrlId);
-        }
-        if (stylemap != null) {
-            stylemap.paint(target);
-        }
+    /*@Override
+    public void beforeClientResponse(boolean initial) {
+        super.beforeClientResponse(initial);
         if (visibilitySet) {
-        	target.addAttribute("visibility",visibility);
-        	visibilitySet=false;
+            target.addAttribute("visibility",visibility);
+            visibilitySet=false;
         }
         if (filterSet) {
-        	target.addAttribute("filterValue",filterValue);
-        	target.addAttribute("filterType",filterType);
-        	target.addAttribute("filterProp",filterProp);
-        	if (filterRefresh) {
-        		target.addAttribute("filterRefresh",true);
-        		filterRefresh=false;
-        	}
-        	filterSet=false;
+            target.addAttribute("filterValue",filterValue);
+            target.addAttribute("filterType",filterType);
+            target.addAttribute("filterProp",filterProp);
+            if (filterRefresh) {
+                target.addAttribute("filterRefresh",true);
+                filterRefresh=false;
+            }
+            filterSet=false;
         }
-    }
+    }*/
 
     /**
      * @return the stylemap
      */
     public StyleMap getStyleMap() {
-        return stylemap;
+        return this.getState().stylemap;
     }
 
     /**
@@ -120,74 +79,59 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
      *            the stylemap to set
      */
     public void setStyleMap(StyleMap stylemap) {
-        this.stylemap = stylemap;
-        requestRepaint();
+        this.getState().stylemap = stylemap;
+        markAsDirty();
     }
 
-    public String getProjection() {
-        return projection;
-    }
-
-    public void setProjection(String projection) {
-        this.projection = projection;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String display_name) {
-        this.displayName = display_name;
-    }
-    
     public void setSelectionMode(SelectionMode selectionMode) {
-        this.selectionMode = selectionMode;
-        requestRepaint();
+        this.getState().selectionMode = selectionMode.toString();
+        markAsDirty();
+    }
+    public SelectionMode getSelectionMode() {
+        return SelectionMode.valueOf(this.getState().selectionMode);
     }
 
-    public SelectionMode getSelectionMode() {
-        return selectionMode;
-    }
-    
     public void setSelectionCtrlId(String selectionCtrlId) {
-    	this.selectionCtrlId = selectionCtrlId;
+        this.getState().selectionCtrlId = selectionCtrlId;
     }
-    
     public String getSelectionCtrlId() {
-    	return selectionCtrlId;
-    }        
-    
+        return this.getState().selectionCtrlId;
+    }
+
     /**
      * allows to set visibility of a layer. A call with 'setVisibility(false)'
-     * displays layer in layer switcher but don't load its data. 
+     * displays layer in layer switcher but don't load its data.
      * @return
      */
-	public void setVisibility(boolean visibility) {
-		this.visibility = visibility;
-		this.visibilitySet = true;
-		requestRepaint();
-	}
-	
-	public void setFilter(String filterType,String filterProp,String filterValue) {
-		this.filterType=filterType;
-		this.filterProp=filterProp;
-		this.filterValue=filterValue;
-		this.filterSet=true;
-		requestRepaint();
-	}
+    public void setVisibility(boolean visibility) {
+        this.getState().visibility = visibility;
+        markAsDirty();
+    }
 
-	public void setFilterAndRefresh(String filterType,String filterProp,String filterValue) {
-		this.filterRefresh=true;
-		setFilter(filterType,filterProp,filterValue);
-	}
+    public void setFilter(String filterType, String filterProp, String filterValue) {
+        this.getState().filterType = filterType;
+        this.getState().filterProp = filterProp;
+        this.getState().filterValue = filterValue;
+        markAsDirty();
+    }
 
-	public interface FeatureSelectedListener {
+    public void setFilterAndRefresh(String filterType, String filterProp, String filterValue) {
+        this.setFilter(filterType, filterProp, filterValue);
+        this.getState().filterRefresh = true;
+    }
+
+    @Override
+    public AutoPopulatedVectorLayerState getState() {
+        return AutoPopulatedVectorLayerState.class.cast(super.getState());
+    }
+
+    public interface FeatureSelectedListener {
 
         public final String EVENT_ID = "vsel";
 
         public final Method method = ReflectTools.findMethod(
-                FeatureSelectedListener.class, "featureSelected",
-                FeatureSelectedEvent.class);
+          FeatureSelectedListener.class, "featureSelected",
+          FeatureSelectedEvent.class);
 
         public void featureSelected(FeatureSelectedEvent event);
 
@@ -212,43 +156,43 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         removeListener(BeforeFeatureSelectedListener.EVENT_ID,
                 BeforeFeatureSelectedEvent.class, listener);
     }
-    
+
     public class FeatureSelectedEvent extends Event {
 
         private String featureId;
-		private Map<String, Object> attributes;
-		private String wkt;
+        private Map<String, Object> attributes;
+        private String wkt;
 
-		public FeatureSelectedEvent(Component source, String featureId, Map<String, Object> attr, String wkt2) {
+        public FeatureSelectedEvent(Component source, String featureId, Map<String, Object> attr, String wkt2) {
             super(source);
             this.setFeatureId(featureId);
             this.setAttributes(attr);
             this.setWkt(wkt2);
         }
 
-		private void setWkt(String wkt2) {
-			this.wkt = wkt2;
-		}
+        private void setWkt(String wkt2) {
+            this.wkt = wkt2;
+        }
 
-		public void setAttributes(Map<String, Object> attr) {
-			this.attributes = attr;
-		}
-		
-		public Map<String, Object> getAttributes() {
-			return attributes;
-		}
+        public void setAttributes(Map<String, Object> attr) {
+            this.attributes = attr;
+        }
 
-		public String getFeatureId() {
-			return featureId;
-		}
+        public Map<String, Object> getAttributes() {
+            return attributes;
+        }
 
-		public void setFeatureId(String featureId) {
-			this.featureId = featureId;
-		}
+        public String getFeatureId() {
+            return featureId;
+        }
 
-		public String getWkt() {
-			return wkt;
-		}
+        public void setFeatureId(String featureId) {
+            this.featureId = featureId;
+        }
+
+        public String getWkt() {
+            return wkt;
+        }
 
     }
 
@@ -275,7 +219,7 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
         public boolean beforeFeatureSelected(BeforeFeatureSelectedEvent event);
 
     }
-    
+
     public void addListener(FeatureUnSelectedListener listener) {
         addListener(FeatureUnSelectedListener.EVENT_ID,
                 FeatureUnSelectedEvent.class, listener,
@@ -289,16 +233,16 @@ public abstract class AbstractAutoPopulatedVectorLayer extends
 
     public class FeatureUnSelectedEvent extends FeatureSelectedEvent {
 
-		public FeatureUnSelectedEvent(Component source, String featureId,Map<String, Object> attr, String wkt) {
-			super(source, featureId, attr, wkt);
-		}
+        public FeatureUnSelectedEvent(Component source, String featureId,Map<String, Object> attr, String wkt) {
+            super(source, featureId, attr, wkt);
+        }
 
     }
 
     public class BeforeFeatureSelectedEvent extends FeatureSelectedEvent {
-		public BeforeFeatureSelectedEvent(Component source, String featureId,Map<String, Object> attr, String wkt) {
-			super(source, featureId, attr, wkt);
-		}
+        public BeforeFeatureSelectedEvent(Component source, String featureId,Map<String, Object> attr, String wkt) {
+            super(source, featureId, attr, wkt);
+        }
     }
 
 }

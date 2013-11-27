@@ -1,89 +1,60 @@
-/**
- * 
- */
+
 package org.vaadin.vol;
 
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.tools.ReflectTools;
+import com.vaadin.shared.Connector;
 import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.ClientWidget;
 import com.vaadin.ui.Component;
+import com.vaadin.util.ReflectTools;
 
-@ClientWidget(org.vaadin.vol.client.ui.VVectorLayer.class)
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.vaadin.vol.client.VectorLayerState;
+
 public class VectorLayer extends AbstractComponentContainer implements Layer {
-
-    private StyleMap stylemap;
 
     public enum SelectionMode {
         NONE, SIMPLE
         // MULTI, MULTI_WITH_AREA_SELECTION etc
     }
 
-    private Vector selectedVector;
-
-    private String displayName = "Vector layer";
-
-    private List<Vector> vectors = new LinkedList<Vector>();
-
-    private SelectionMode selectionMode = SelectionMode.NONE;
-
     public enum DrawingMode {
         NONE, LINE, AREA, RECTANGLE, CIRCLE, POINT, MODIFY
     }
 
-    private DrawingMode drawingMode = DrawingMode.NONE;
-    
-    private String selectionCtrlId;             // Common SelectFeature control identifier
+    @Override
+    public VectorLayerState getState() {
+        return VectorLayerState.class.cast(super.getState());
+    }
 
     public void addVector(Vector m) {
         addComponent(m);
-    }
-
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        target.addAttribute("name", displayName);
-        target.addAttribute("dmode", drawingMode.toString());
-        target.addAttribute("smode", selectionMode.toString());
-        
-        if (selectionCtrlId != null) {
-            target.addAttribute("selectionCtrlId", selectionCtrlId);
-        }
-        
-        if (selectedVector != null) {
-            target.addAttribute("svector", selectedVector);
-        }
-
-        if (stylemap != null) {
-            stylemap.paint(target);
-        }
-
-        for (Vector m : vectors) {
-            m.paint(target);
-        }
-
     }
 
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
     }
 
-    public Iterator<Component> getComponentIterator() {
-        LinkedList<Component> list = new LinkedList<Component>(vectors);
+    @Override
+    public int getComponentCount() {
+        return this.getState().vectors.size();
+    }
+
+    @Override
+    public Iterator<Component> iterator() {
+        ArrayList<Component> list = new ArrayList<Component>(getState().vectors.size());
+        for (Connector connector : getState().vectors) {
+            list.add((Component)connector);
+        }
         return list.iterator();
     }
+
 
     @Override
     public void addComponent(Component c) {
         if (c instanceof Vector) {
-            vectors.add((Vector) c);
+            getState().vectors.add((Vector)c);
             super.addComponent(c);
         } else {
             throw new IllegalArgumentException(
@@ -93,25 +64,25 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 
     @Override
     public void removeComponent(Component c) {
-        vectors.remove(c);
+        getState().vectors.remove(c);
         super.removeComponent(c);
-        if (selectedVector == c) {
-            selectedVector = null;
+        if (getState().selectedVector == c) {
+            getState().selectedVector = null;
             fireEvent(new VectorUnSelectedEvent(this, (Vector) c));
         }
-        requestRepaint();
+        markAsDirty();
     }
 
     public void setDrawingMode(DrawingMode drawingMode) {
-        this.drawingMode = drawingMode;
-        requestRepaint();
+        getState().drawingMode = drawingMode.toString();
+        markAsDirty();
     }
 
     public DrawingMode getDrawingMode() {
-        return drawingMode;
+        return DrawingMode.valueOf(getState().drawingMode);
     }
 
-    @Override
+    /*@Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);
         // support other drawing modes than area
@@ -127,9 +98,9 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                 PolyLine polyline = new PolyLine();
                 polyline.setPoints(points);
                 newVectorPainted(polyline);
-            } else if (drawingMode == DrawingMode.AREA 
-            		|| drawingMode == DrawingMode.RECTANGLE 
-            		|| drawingMode == DrawingMode.CIRCLE) {
+            } else if (drawingMode == DrawingMode.AREA
+                    || drawingMode == DrawingMode.RECTANGLE
+                    || drawingMode == DrawingMode.CIRCLE) {
                 Area area = new Area();
                 area.setPoints(points);
                 newVectorPainted(area);
@@ -166,38 +137,45 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
                     this, object);
             fireEvent(vectorSelectedEvent);
         }
-    }
+    }*/
 
     private void vectorModified(Vector object2) {
-        VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this,
-                object2);
+        VectorModifiedEvent vectorModifiedEvent = new VectorModifiedEvent(this, object2);
         fireEvent(vectorModifiedEvent);
     }
 
     protected void newVectorPainted(Vector vector) {
         VectorDrawnEvent vectorDrawnEvent = new VectorDrawnEvent(this, vector);
         fireEvent(vectorDrawnEvent);
-        requestRepaint();
+        markAsDirty();
     }
 
     public interface VectorDrawnListener {
 
         public final Method method = ReflectTools.findMethod(
-                VectorDrawnListener.class, "vectorDrawn",
-                VectorDrawnEvent.class);
+          VectorDrawnListener.class, "vectorDrawn",
+          VectorDrawnEvent.class);
 
         public void vectorDrawn(VectorDrawnEvent event);
 
     }
 
-    public void addListener(VectorDrawnListener listener) {
+    public void addVectorDrawnListener(VectorDrawnListener listener) {
         addListener(VectorDrawnEvent.class, listener,
                 VectorDrawnListener.method);
     }
+    @Deprecated
+    public void addListener(VectorDrawnListener listener) {
+        this.addVectorDrawnListener(listener);
+    }
 
-    public void removeListener(VectorDrawnListener listener) {
+    public void removeVectorDrawnListener(VectorDrawnListener listener) {
         removeListener(VectorDrawnEvent.class, listener,
                 VectorDrawnListener.method);
+    }
+    @Deprecated
+    public void removeListener(VectorDrawnListener listener) {
+        this.removeVectorDrawnListener(listener);
     }
 
     public interface VectorModifiedListener {
@@ -210,29 +188,37 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 
     }
 
-    public void addListener(VectorModifiedListener listener) {
+    public void addVectorModifiedListener(VectorModifiedListener listener) {
         addListener(VectorModifiedEvent.class, listener,
                 VectorModifiedListener.method);
     }
+    @Deprecated
+    public void addListener(VectorModifiedListener listener) {
+        this.addVectorModifiedListener(listener);
+    }
 
-    public void removeListener(VectorModifiedListener listener) {
+    public void removeVectorModifiedListener(VectorModifiedListener listener) {
         removeListener(VectorModifiedEvent.class, listener,
                 VectorModifiedListener.method);
     }
+    @Deprecated
+    public void removeListener(VectorModifiedListener listener) {
+        this.removeVectorModifiedListener(listener);
+    }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.getState().displayName = displayName;
     }
 
     public String getDisplayName() {
-        return displayName;
+        return getState().displayName;
     }
 
     /**
      * @return the stylemap
      */
     public StyleMap getStyleMap() {
-        return stylemap;
+        return getState().stylemap;
     }
 
     /**
@@ -240,25 +226,25 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
      *            the stylemap to set
      */
     public void setStyleMap(StyleMap stylemap) {
-        this.stylemap = stylemap;
-        requestRepaint();
+        this.getState().stylemap = stylemap;
+        markAsDirty();
     }
 
     public String getSelectionCtrlId() {
-        return selectionCtrlId;
+        return getState().selectionCtrlId;
     }
 
     public void setSelectionCtrlId(String selectionCtrlId) {
-        this.selectionCtrlId = selectionCtrlId;
+        this.getState().selectionCtrlId = selectionCtrlId;
     }
 
     public void setSelectionMode(SelectionMode selectionMode) {
-        this.selectionMode = selectionMode;
-        requestRepaint();
+        this.getState().selectionMode = selectionMode.toString();
+        markAsDirty();
     }
 
     public SelectionMode getSelectionMode() {
-        return selectionMode;
+        return SelectionMode.valueOf(getState().selectionMode);
     }
 
     public class VectorDrawnEvent extends Event {
@@ -311,14 +297,22 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 
     }
 
-    public void addListener(VectorSelectedListener listener) {
+    public void addVectorSelectedListener(VectorSelectedListener listener) {
         addListener(VectorSelectedListener.EVENT_ID, VectorSelectedEvent.class,
                 listener, VectorSelectedListener.method);
     }
+    @Deprecated
+    public void addListener(VectorSelectedListener listener) {
+        this.addVectorSelectedListener(listener);
+    }
 
-    public void removeListener(VectorSelectedListener listener) {
+    public void removeVectorSelectedListener(VectorSelectedListener listener) {
         removeListener(VectorSelectedListener.EVENT_ID,
                 VectorSelectedEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(VectorSelectedListener listener) {
+        this.addVectorSelectedListener(listener);
     }
 
     public class VectorSelectedEvent extends Event {
@@ -352,31 +346,38 @@ public class VectorLayer extends AbstractComponentContainer implements Layer {
 
     }
 
-    public void addListener(VectorUnSelectedListener listener) {
+    public void addVectorUnSelectedListener(VectorUnSelectedListener listener) {
         addListener(VectorUnSelectedListener.EVENT_ID,
                 VectorUnSelectedEvent.class, listener,
                 VectorUnSelectedListener.method);
     }
+    @Deprecated
+    public void addListener(VectorUnSelectedListener listener) {
+        this.addVectorUnSelectedListener(listener);
+    }
 
+    public void removeVectorUnSelectedListener(VectorUnSelectedListener listener) {
+        removeListener(VectorUnSelectedListener.EVENT_ID, VectorUnSelectedEvent.class, listener);
+    }
+    @Deprecated
     public void removeListener(VectorUnSelectedListener listener) {
-        removeListener(VectorUnSelectedListener.EVENT_ID,
-                VectorUnSelectedEvent.class, listener);
+        this.removeVectorUnSelectedListener(listener);
     }
 
     public Vector getSelectedVector() {
-        return selectedVector;
+        return (Vector)getState().selectedVector;
     }
 
     public void setSelectedVector(Vector selectedVector) {
-        if (this.selectedVector != selectedVector) {
-            if (this.selectedVector != null) {
-                fireEvent(new VectorUnSelectedEvent(this, this.selectedVector));
+        if (this.getState().selectedVector != selectedVector) {
+            if (this.getState().selectedVector != null) {
+                fireEvent(new VectorUnSelectedEvent(this, (Vector)this.getState().selectedVector));
             }
-            this.selectedVector = selectedVector;
+            this.getState().selectedVector = selectedVector;
             if (selectedVector != null) {
                 fireEvent(new VectorSelectedEvent(this, selectedVector));
             }
-            requestRepaint();
+            markAsDirty();
         }
     }
 

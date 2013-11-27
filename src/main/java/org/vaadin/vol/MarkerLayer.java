@@ -1,50 +1,54 @@
 /**
- * 
+ *
  */
 package org.vaadin.vol;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.shared.Connector;
 import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.ClientWidget;
 import com.vaadin.ui.Component;
 
-@ClientWidget(org.vaadin.vol.client.ui.VMarkerLayer.class)
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.vaadin.vol.client.MarkerLayerState;
+
 public class MarkerLayer extends AbstractComponentContainer implements Layer {
 
-    private List<Marker> markers = new LinkedList<Marker>();
-
-    private String displayName = "Markers";
-
-    public void addMarker(Marker m) {
-        addComponent(m);
+    public MarkerLayer() {
+        getState().displayName = "Markers";
     }
 
     @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        target.addAttribute("name", getDisplayName());
-        for (Marker m : markers) {
-            m.paint(target);
-        }
+    public MarkerLayerState getState() {
+        return MarkerLayerState.class.cast(super.getState());
+    }
+
+    public void addMarker(Marker m) {
+        addComponent(m);
     }
 
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
     }
 
-    public Iterator<Component> getComponentIterator() {
-        LinkedList<Component> list = new LinkedList<Component>(markers);
+    @Override
+    public int getComponentCount() {
+        return getState().markers.size();
+    }
+
+    @Override
+    public Iterator<Component> iterator() {
+        ArrayList<Component> list = new ArrayList<Component>(getState().markers.size());
+        for (Connector connector : getState().markers) {
+            list.add((Component)connector);
+        }
         return list.iterator();
     }
 
     @Override
     public void addComponent(Component c) {
         if (c instanceof Marker) {
-            markers.add((Marker) c);
+            getState().markers.add(c);
             super.addComponent(c);
         } else {
             throw new IllegalArgumentException(
@@ -55,16 +59,8 @@ public class MarkerLayer extends AbstractComponentContainer implements Layer {
     @Override
     public void removeComponent(Component c) {
         super.removeComponent(c);
-        markers.remove(c);
-        requestRepaint();
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
+        getState().markers.remove(c);
+        markAsDirty();
     }
 
     public void removeMarker(Marker marker) {

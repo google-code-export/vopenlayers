@@ -1,5 +1,7 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.ui.Component;
+
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedEvent;
 import org.vaadin.vol.AbstractAutoPopulatedVectorLayer.FeatureSelectedListener;
 import org.vaadin.vol.Bounds;
@@ -9,8 +11,6 @@ import org.vaadin.vol.Style;
 import org.vaadin.vol.StyleMap;
 import org.vaadin.vol.WebFeatureServiceLayer;
 import org.vaadin.vol.WebMapServiceLayer;
-
-import com.vaadin.ui.Component;
 
 /**
  * http://openlayers.org/dev/examples/wfs-states.js
@@ -45,7 +45,7 @@ public class WebFeatureServiceLayerTest extends AbstractVOLTest {
         });
 
         // proxied to http://demo.opengeo.org/geoserver/wfs
-        webFeatureServiceLayer.setUri(getApplication().getURL()
+        webFeatureServiceLayer.setUri(getUI().getPage().getLocation()
                 + "../WFSPROXY/");
         webFeatureServiceLayer.setFeatureType("states");
         webFeatureServiceLayer.setFeatureNS("http://www.openplans.org/topp");
