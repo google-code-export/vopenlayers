@@ -2,73 +2,69 @@ package org.vaadin.vol;
 
 import java.io.Serializable;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-
 public class Bounds implements Serializable {
 
     private double top;
     private double bottom;
     private double left;
     private double right;
-    
+
     private boolean empty = true;
 
     public Bounds(Point... points) {
-    	if(points.length == 0) {
-    		return;
-    	}
-        
+        if(points.length == 0) {
+            return;
+        }
+
         Point first = points[0];
-		init(first);
+        init(first);
 
         for (Point point : points) {
-        	extend(point);
+            extend(point);
         }
     }
 
-	private void init(Point first) {
-		top = first.getLat();
+    private void init(Point first) {
+        top = first.getLat();
         bottom = first.getLat();
         right = first.getLon();
         left = first.getLon();
         empty = false;
-	}
+    }
 
 
     /**
      * extend(Point... points) will be useful in case of multiple vector on the
      * same map to compute the bounds that surround all the vectors
-     * 
+     *
      * Notes : there is no check of the starting bounds values the method will
      * fail if bounds values are not correctly initialized
      */
     public void extend(Point... points) {
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
+        for (Point p : points) {
             extend(p);
         }
     }
 
     public void extend(Point p) {
-    	if(empty) {
-    		init(p);
-    	} else {
-    		double lon = p.getLon();
-    		if (lon < left) {
-    			left = lon;
-    		}
-    		if (lon > right) {
-    			right = lon;
-    		}
-    		double lat = p.getLat();
-    		if (lat < bottom) {
-    			bottom = lat;
-    		}
-    		if (lat > top) {
-    			top = lat;
-    		}
-    	}
+        if(empty) {
+            init(p);
+        } else {
+            double lon = p.getLon();
+            if (lon < left) {
+                left = lon;
+            }
+            if (lon > right) {
+                right = lon;
+            }
+            double lat = p.getLat();
+            if (lat < bottom) {
+                bottom = lat;
+            }
+            if (lat > top) {
+                top = lat;
+            }
+        }
         // TODO figure out how to behave on poles and in date line
     }
 
@@ -82,7 +78,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #setTop(double)}
-     * 
+     *
      * @param lat
      */
     public void setMaxLat(double lat) {
@@ -91,7 +87,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #getTop()}
-     * 
+     *
      * @return
      */
     public double getMaxLat() {
@@ -108,7 +104,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #setBottom(double)}
-     * 
+     *
      * @param lat
      */
     public void setMinLat(double lat) {
@@ -117,7 +113,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #getBottom()}
-     * 
+     *
      * @return
      */
     public double getMinLat() {
@@ -134,7 +130,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #setLeft(double)}
-     * 
+     *
      * @param lon
      */
     public void setMinLon(double lon) {
@@ -143,7 +139,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #getLeft()}
-     * 
+     *
      * @return
      */
     public double getMinLon() {
@@ -160,7 +156,7 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #setRight(double)}
-     * 
+     *
      * @param lon
      */
     public void setMaxLon(double lon) {
@@ -169,19 +165,21 @@ public class Bounds implements Serializable {
 
     /**
      * Alias for {@link #getRight()}
-     * 
+     *
      * @return
      */
     public double getMaxLon() {
         return getRight();
     }
 
+/*
     public void paint(String string, PaintTarget target) throws PaintException {
         target.addAttribute(string + "_top", top);
         target.addAttribute(string + "_right", right);
         target.addAttribute(string + "_bottom", bottom);
         target.addAttribute(string + "_left", left);
     }
+*/
 
     @Override
     public String toString() {

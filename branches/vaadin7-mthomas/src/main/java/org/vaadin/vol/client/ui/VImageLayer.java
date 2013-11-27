@@ -1,11 +1,11 @@
 package org.vaadin.vol.client.ui;
 
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.UIDL;
+
 import org.vaadin.vol.client.wrappers.Bounds;
 import org.vaadin.vol.client.wrappers.Size;
 import org.vaadin.vol.client.wrappers.layer.ImageLayer;
-
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.UIDL;
 
 public class VImageLayer extends VAbstracMapLayer<ImageLayer> {
 

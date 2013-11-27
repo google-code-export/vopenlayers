@@ -1,5 +1,16 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.MethodProperty;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.VerticalLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +29,6 @@ import org.vaadin.vol.VectorLayer.SelectionMode;
 import org.vaadin.vol.VectorLayer.VectorModifiedEvent;
 import org.vaadin.vol.VectorLayer.VectorSelectedEvent;
 import org.vaadin.vol.VectorLayer.VectorUnSelectedEvent;
-
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.MethodProperty;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.VerticalLayout;
 
 public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         VectorLayer.VectorModifiedListener {
@@ -123,7 +123,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
         vectorLayer.addListener(new ComponentDetachListener() {
             public void componentDetachedFromContainer(
                     ComponentDetachEvent event) {
-                vectorLayer.getWindow().showNotification(
+                vectorLayer.getUI().showNotification(
                         "Vector removed (Component detach event).");
             }
         });
@@ -148,12 +148,12 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
                         if (vectorLayer.getDrawingMode() == DrawingMode.MODIFY) {
                             vectorLayer.setDrawingMode(DrawingMode.NONE);
                             vectorLayer.setSelectionMode(SelectionMode.SIMPLE);
-                            vectorLayer.getWindow().showNotification(
+                            vectorLayer.getUI().showNotification(
                                     "Selections only");
                         } else {
                             vectorLayer.setSelectionMode(SelectionMode.NONE);
                             vectorLayer.setDrawingMode(DrawingMode.MODIFY);
-                            vectorLayer.getWindow().showNotification(
+                            vectorLayer.getUI().showNotification(
                                     "Modifications allowed");
                         }
                     }
@@ -213,7 +213,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
 
     /**
      * An example how to zoom the map so that it covers given points.
-     * 
+     *
      * @param map
      * @param points
      */
@@ -223,7 +223,7 @@ public class ModifyImmediateVectorLayer extends AbstractVOLTest implements
     }
 
     public void vectorModified(VectorModifiedEvent event) {
-        vectorLayer.getWindow().showNotification(
+        vectorLayer.getUI().showNotification(
                 "Vector modified::" + event.getVector().getDebugId());
     }
 

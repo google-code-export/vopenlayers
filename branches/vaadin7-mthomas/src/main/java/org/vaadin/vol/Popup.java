@@ -1,28 +1,24 @@
 /**
- * 
+ *
  */
 package org.vaadin.vol;
+
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
+import com.vaadin.util.ReflectTools;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.vaadin.vol.client.ui.VPopup;
-
-import com.vaadin.event.MouseEvents.ClickEvent;
-import com.vaadin.event.MouseEvents.ClickListener;
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.tools.ReflectTools;
-import com.vaadin.ui.AbstractComponentContainer;
-import com.vaadin.ui.ClientWidget;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
+import org.vaadin.vol.client.PopupState;
 
 @SuppressWarnings("serial")
-@ClientWidget(VPopup.class)
 public class Popup extends AbstractComponentContainer {
 
     public class CloseEvent extends Event {
@@ -35,7 +31,7 @@ public class Popup extends AbstractComponentContainer {
         public void onClose(CloseEvent event);
 
         final Method method = ReflectTools.findMethod(CloseListener.class,
-                "onClose", CloseEvent.class);
+          "onClose", CloseEvent.class);
         final String id = "close";
     }
 
@@ -43,15 +39,10 @@ public class Popup extends AbstractComponentContainer {
         DEFAULT, ANCHORED, ANCHORED_BUBBLE, FRAMED, FRAMED_CLOUD
     }
 
-    private String projection = "EPSG:4326";
-    private PopupStyle popupstyle = PopupStyle.DEFAULT;
-    private Component anchor;
     private Component content;
-    private Point point = new Point(0, 0);
-    private boolean closable = true;
 
     public Popup(double lon, double lat, String content) {
-        point = new Point(lon, lat);
+        getState().point = new Point(lon, lat);
         setContent(content);
     }
 
@@ -67,29 +58,34 @@ public class Popup extends AbstractComponentContainer {
         this("");
     }
 
+    @Override
+    public PopupState getState() {
+        return PopupState.class.cast(super.getState());
+    }
+
     public double getLon() {
-        return point.getLon();
+        return getState().point.getLon();
     }
 
     public double getLat() {
-        return point.getLat();
+        return getState().point.getLat();
     }
 
     public void setLon(double lon) {
-        point.setLon(lon);
-        requestRepaint();
+        getState().point.setLon(lon);
+        markAsDirty();
     }
 
     public void setLat(double lat) {
-        point.setLat(lat);
-        requestRepaint();
+        getState().point.setLat(lat);
+        markAsDirty();
     }
 
     public void setContent(String content) {
-        Label c = new Label(content, Label.CONTENT_XHTML);
+        Label c = new Label(content, ContentMode.HTML);
         c.setSizeUndefined();
         addComponent(c);
-        requestRepaint();
+        markAsDirty();
     }
 
     @Override
@@ -106,6 +102,19 @@ public class Popup extends AbstractComponentContainer {
     }
 
     @Override
+    public void beforeClientResponse(boolean initial) {
+        super.beforeClientResponse(initial);
+
+        PopupStyle current = this.getPopupStyle();
+        if (getState().anchor == null
+          && (current == PopupStyle.FRAMED
+          || current == PopupStyle.ANCHORED || current == PopupStyle.ANCHORED_BUBBLE)) {
+            throw new IllegalStateException(
+              "Anchor element hasn't been defined, but is required for this type of popup.");
+        }
+    }
+
+    /*@Override
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
         target.addAttribute("lon", point.getLon());
@@ -123,18 +132,18 @@ public class Popup extends AbstractComponentContainer {
             target.addAttribute("anchor", anchor);
         }
         content.paint(target);
-    }
+    }*/
 
     public void addClickListener(ClickListener listener) {
         addListener("click", ClickEvent.class, listener,
-                ClickListener.clickMethod);
+          ClickListener.clickMethod);
     }
 
     public void removeClickListener(ClickListener listener) {
         removeListener(ClickEvent.class, listener);
     }
 
-    @Override
+    /*@Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);
         if (variables.containsKey("close")) {
@@ -148,44 +157,58 @@ public class Popup extends AbstractComponentContainer {
                 }
             }
         }
-    }
+    }*/
 
     public void setPopupStyle(PopupStyle style) {
-        popupstyle = style;
-        requestRepaint();
+        getState().popupstyle = style.toString();
+        markAsDirty();
     }
 
     public PopupStyle getPopupStyle() {
-        return popupstyle;
+        return PopupStyle.valueOf(getState().popupstyle);
     }
 
     public void setAnchor(Marker marker) {
-        anchor = marker;
-        requestRepaint();
+        getState().anchor = marker;
+        markAsDirty();
     }
 
-    public void addListener(CloseListener listener) {
+    public void addCloseListener(CloseListener listener) {
         super.addListener(CloseListener.id, CloseEvent.class, listener,
-                CloseListener.method);
+          CloseListener.method);
+    }
+    @Deprecated
+    public void addListener(CloseListener listener) {
+        this.addCloseListener(listener);
     }
 
-    public void removeListener(CloseListener listener) {
+    public void removeCloseListener(CloseListener listener) {
         super.removeListener(CloseListener.id, CloseEvent.class, listener);
+    }
+    @Deprecated
+    public void removeListener(CloseListener listener) {
+        this.removeCloseListener(listener);
     }
 
     public boolean isClosable() {
-        return closable;
+        return getState().closable;
     }
 
     public void setClosable(boolean closable) {
-        this.closable = closable;
+        this.getState().closable = closable;
     }
 
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
     }
 
-    public Iterator<Component> getComponentIterator() {
+    @Override
+    public int getComponentCount() {
+        return 1;
+    }
+
+    @Override
+    public Iterator<Component> iterator() {
         return Collections.singleton(content).iterator();
     }
 

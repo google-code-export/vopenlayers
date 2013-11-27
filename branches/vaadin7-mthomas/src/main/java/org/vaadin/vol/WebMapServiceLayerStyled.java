@@ -1,31 +1,20 @@
 package org.vaadin.vol;
 
-import org.vaadin.vol.client.ui.VWebMapServiceLayerStyled;
+import org.vaadin.vol.client.WebMapServiceLayerStyledState;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
-import com.vaadin.ui.ClientWidget;
-
-@ClientWidget(VWebMapServiceLayerStyled.class)
 public class WebMapServiceLayerStyled extends WebMapServiceLayer {
 
-	private String sld = "";
+    @Override
+    public WebMapServiceLayerStyledState getState() {
+        return WebMapServiceLayerStyledState.class.cast(super.getState());
+    }
 
-	public WebMapServiceLayerStyled() {
+    public String getSld() {
+        return this.getState().sld;
+    }
 
-	}
-
-	public void paintContent(PaintTarget target) throws PaintException {
-		super.paintContent(target);
-		target.addAttribute("sld", sld);
-	}
-
-	public String getSld() {
-		return sld;
-	}
-
-	public void setSld(String sld) {
-		this.sld = sld;
-		requestRepaint();
-	}
+    public void setSld(String sld) {
+        this.getState().sld = sld;
+        markAsDirty();
+    }
 }

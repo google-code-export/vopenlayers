@@ -1,20 +1,23 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-
-public abstract class AbstractVOLTest extends Window {
+public abstract class AbstractVOLTest extends UI {
 
     protected VerticalLayout content;
 
-    public AbstractVOLTest() {
+    @Override
+    protected void init(VaadinRequest request) {
         content = new VerticalLayout();
         setContent(content);
     }

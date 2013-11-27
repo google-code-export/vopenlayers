@@ -1,5 +1,13 @@
 package org.vaadin.vol.demo;
 
+import com.vaadin.event.Action;
+import com.vaadin.event.Action.Handler;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
+
 import java.util.Iterator;
 
 import org.vaadin.vol.Bounds;
@@ -12,13 +20,6 @@ import org.vaadin.vol.Vector;
 import org.vaadin.vol.VectorLayer;
 import org.vaadin.vol.VectorLayer.SelectionMode;
 import org.vaadin.vol.VectorLayer.VectorSelectedEvent;
-
-import com.vaadin.event.Action;
-import com.vaadin.event.Action.Handler;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
 
 /**
  * Example where one can drag points or squares with context menu.
@@ -94,9 +95,9 @@ public class RemovingSelectedVector extends AbstractVOLTest implements Handler, 
 
     @Override
     OpenLayersMap getMap() {
-        
-        getContent().addComponent(removeSelected);
-        getContent().addComponent(removeAll);
+
+        ((ComponentContainer)getContent()).addComponent(removeSelected);
+        ((ComponentContainer)getContent()).addComponent(removeAll);
         OpenLayersMap openLayersMap = new OpenLayersMap();
         addBaseLayer(openLayersMap);
         return openLayersMap;
@@ -114,7 +115,7 @@ public class RemovingSelectedVector extends AbstractVOLTest implements Handler, 
         } else if (event.getButton() == removeSelected) {
             vectorLayer.removeComponent(selected);
         }
-        
+
     }
 
 }

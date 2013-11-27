@@ -1,16 +1,16 @@
 package org.vaadin.vol.client.ui;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ApplicationConnection;
+import com.vaadin.client.Paintable;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.ValueMap;
+
 import org.vaadin.vol.client.wrappers.Map;
 import org.vaadin.vol.client.wrappers.Projection;
 import org.vaadin.vol.client.wrappers.Vector;
 import org.vaadin.vol.client.wrappers.layer.VectorLayer;
-
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.terminal.gwt.client.ApplicationConnection;
-import com.vaadin.terminal.gwt.client.Paintable;
-import com.vaadin.terminal.gwt.client.UIDL;
-import com.vaadin.terminal.gwt.client.ValueMap;
 
 public abstract class VAbstractVector extends Widget implements Paintable {
 
@@ -25,7 +25,7 @@ public abstract class VAbstractVector extends Widget implements Paintable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.vaadin.terminal.gwt.client.Paintable#updateFromUIDL(com.vaadin.terminal
      * .gwt.client.UIDL, com.vaadin.terminal.gwt.client.ApplicationConnection)
@@ -44,10 +44,10 @@ public abstract class VAbstractVector extends Widget implements Paintable {
 
         boolean update = vector != null;
         if(update) {
-            // temporary remove erase the vector 
+            // temporary remove erase the vector
             getLayer().eraseFeature(vector);
         }
-        
+
         updateAttributes(childUIDL, client);
 
         createOrUpdateVector(childUIDL, client);
@@ -62,7 +62,7 @@ public abstract class VAbstractVector extends Widget implements Paintable {
         } else {
             getLayer().addFeature(vector);
         }
-        
+
     }
 
     private void updateAttributes(UIDL childUIDL, ApplicationConnection client) {
